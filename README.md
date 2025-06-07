@@ -78,7 +78,8 @@ npm install
 # Native directories (`android` and `ios`) are not included in the repo.
 # Generate them with the React Native CLI if they don't exist. The init command
 # downloads a template from npm, so make sure you have network access.
-npx react-native init AmanaTmp --skip-install
+# React Native 0.72.7 worked well during testing, so we specify it explicitly.
+npx react-native init AmanaTmp --template react-native@0.72.7
 mv AmanaTmp/android AmanaTmp/ios .
 rm -rf AmanaTmp
 # If you cannot run the init command (e.g. in an offline environment), copy
