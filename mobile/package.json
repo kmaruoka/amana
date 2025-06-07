@@ -18,7 +18,7 @@
     "react-native-screens": "^3.22.0",
     "react-native-safe-area-context": "^4.5.0",
     "@react-navigation/native-stack": "^6.9.12",
-    "@rnmapbox/maps": "^10.5.0"
+    "@rnmapbox/maps": "^10.5.1"
   },
   "devDependencies": {
     "typescript": "^5.0.4"
