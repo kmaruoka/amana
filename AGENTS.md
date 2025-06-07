@@ -1,189 +1,189 @@
-# �A�v���P�[�V�����d�l��
-## �T�v
+# アプリケーション仕様書
+## 概要
 
-- Ingress�A�|�P����GO�A�h���N�G�E�H�[�N���ɑ�\�����AGPS�ƒn�}��p�����A�v���B 
-- ���{�S���̐_�Ђ̍��W���o�^����Ă���A�Q�q(���̋����ɋߕt���ă^�b�v)���邱�ƂŁA�_�Ђ��J���Ă���_�l���}�ӂɓo�^�����B 
-- �퓬�Ȃǂ̗v�f�͂Ȃ��A�Q�q�ɂ��_�ЂƍՐ_�̐}�ӃR���N�V�����A�̍����W�A�R�~���j�P�[�V�������y���ރA�v���ł���B
+- Ingress、ポケモンGO、ドラクエウォーク等に代表される、GPSと地図を用いたアプリ。 
+- 日本全国の神社の座標が登録されており、参拝(一定の距離に近付いてタップ)することで、神社と祀られている神様が図鑑に登録される。 
+- 戦闘などの要素はなく、参拝による神社と祭神の図鑑コレクション、称号収集、コミュニケーションを楽しむアプリである。
 
-## ��ʍ\��
-- �n�}�A�}�ӁA���[�U�[�A�ݒ���������j���[�o�[�i�A�C�R���j�Ő؂�ւ��\
+## 画面構成
+- 地図、図鑑、ユーザー、設定を下部メニューバー（アイコン）で切り替え可能
 
-- �n�}
-	��ʂ����ς��Ɍ��ݒn�𒆐S�Ƃ���2D�n�}���L�����Ă���B
-	�n�}��ɂ͓��{�S���̐_�Ђ̃X�|�b�g���\������Ă���B
-	���ݒn�̎��͂ɂ͔��a100m�̉~���\������Ă���B
-	�~�̒��ɓ������_�ЂɎQ�q���ł���B
-	�Q�q�����_�ЂƂ��̍Ր_���}�ӂɓo�^����A�Q�q�����J�E���g�A�b�v����B
-	1����1�̐_�Ђ�1�񂵂��Q�q�ł��Ȃ��B
-	��ʉ����Ƀ��O�y�C��������B
-	���O�y�C���̓^�b�v����Ɖ�ʂ����ς��Ɋg�傳��A������x�^�b�v����ƌ��̃T�C�Y�ɖ߂�B
-	���O�ɂ́A������t�H���[���Ă��郆�[�U�[�̎Q�q��̍��l���Ȃǂ̏�񂪗����B
+- 地図
+	画面いっぱいに現在地を中心とした2D地図が広がっている。
+	地図上には日本全国の神社のスポットが表示されている。
+	現在地の周囲には半径100mの円が表示されている。
+	円の中に入った神社に参拝ができる。
+	参拝した神社とその祭神が図鑑に登録され、参拝数がカウントアップする。
+	1日に1つの神社に1回しか参拝できない。
+	画面下部にログペインがある。
+	ログペインはタップすると画面いっぱいに拡大され、もう一度タップすると元のサイズに戻る。
+	ログには、自分やフォローしているユーザーの参拝や称号獲得などの情報が流れる。
 
-- �}��
-	�_�ЂƍՐ_������B�i�^�u�ŕ�����Ă���B�j
-	�f�t�H���g�ł͓o�^�����̍~���ɕ\�������B
-	�o�^�����A���O�A�Q�q���̏����E�~���ɕύX�ł���B
-	�\���X�^�C���́A�J�[�h�i�A�C�L���b�`�摜�Ɩ��O�j�ƃ��X�g�i���O�̂݁j���I���ł���B
-	���O���^�b�v����Ɛ_�Ђ���эՐ_�̉�ʂɑJ�ڂ���B
+- 図鑑
+	神社と祭神がある。（タブで分かれている。）
+	デフォルトでは登録日時の降順に表示される。
+	登録日時、名前、参拝数の昇順・降順に変更できる。
+	表示スタイルは、カード（アイキャッチ画像と名前）とリスト（名前のみ）が選択できる。
+	名前をタップすると神社および祭神の画面に遷移する。
 
-	- �_�Џ��
-		�ȉ��̏�񂪕\�������B
-			���O
-				�����Ɠǂ݉���
-			�T���l�C���摜
-				�}�ӂɓo�^���ꂽ�_�Ђɂ͉摜���A�b�v���[�h�ł���B
-				�i1�l1�_��1���܂ŁA�Ȃǂ̐�����݂���B�j
-				�i���F���ɂ��邱�Ƃ���������B�j
-				�摜�ɂ͓��[�i�����ˁ^Good�j�ł��A���[�����L���O��ʂ̉摜���T���l�C���Ƃ��č̗p�����B
-				�i���A���^�C���X�V�̓T�[�o�[�ɕ��ׂ�������̂ŁA1��1��X�V����B�j
-				�T���l�C���摜�̍����Ɂuby �����v�Ƃ����`�Ń��[�U�[�����\�������B
-				�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
-			���ݒn
-			�n��
-			�Ր_
-				�J���Ă���Ր_�̈ꗗ
-				�i���O���^�b�v����ƁA�Ր_���y�[�W�ɑJ�ڂ���B�j
-			���j�E�`��
-				���[�U�[�����e�ł���B
-				�i���F���ɂ��邱�Ƃ���������B�j
-			�՗�
-			�Q�q��
-				�S���[�U�[�̎Q�q�����\�������B
-					�{��
-					���T
-					����
-					���N
-					�݌v
-			�����L���O
-				�Q�q���̏�ʃ��[�U�[��5�ʂ܂ŕ\�������B
-				�^�b�v����Ƃ��̃y�C�����S��ʂɂȂ��đS���ʂ��\�������B
-				�i���A���^�C���X�V�̓T�[�o�[�ɕ��ׂ�������̂ŁA1��1��X�V����B�j
-				�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
+	- 神社情報
+		以下の情報が表示される。
+			名前
+				漢字と読み仮名
+			サムネイル画像
+				図鑑に登録された神社には画像をアップロードできる。
+				（1人1神社1枚まで、などの制限を設ける。）
+				（承認制にすることも検討する。）
+				画像には投票（いいね／Good）でき、投票ランキング一位の画像がサムネイルとして採用される。
+				（リアルタイム更新はサーバーに負荷がかかるので、1日1回更新する。）
+				サムネイル画像の左下に「by ●●」という形でユーザー名が表示される。
+				（名前をタップすると、ユーザー情報ページに遷移する。）
+			所在地
+			創建
+			祭神
+				祀られている祭神の一覧
+				（名前をタップすると、祭神情報ページに遷移する。）
+			歴史・伝承
+				ユーザーが投稿できる。
+				（承認制にすることも検討する。）
+			祭礼
+			参拝数
+				全ユーザーの参拝数が表示される。
+					本日
+					今週
+					今月
+					今年
+					累計
+			ランキング
+				参拝数の上位ユーザーが5位まで表示される。
+				タップするとこのペインが全画面になって全順位が表示される。
+				（リアルタイム更新はサーバーに負荷がかかるので、1日1回更新する。）
+				（名前をタップすると、ユーザー情報ページに遷移する。）
 		
-	- �Ր_���
-		�ȉ��̏�񂪕\�������B
-			���O
-				�����Ɠǂ݉���
-			�T���l�C���摜
-				�}�ӂɓo�^���ꂽ�Ր_�ɂ͉摜���A�b�v���[�h�ł���B
-				�i1�l1�Ր_1���܂ŁA�Ȃǂ̐�����݂���B�j
-				�i���F���ɂ��邱�Ƃ���������B�j
-				�摜�ɂ͓��[�i�����ˁ^Good�j�ł��A���[�����L���O��ʂ̉摜���T���l�C���Ƃ��č̗p�����B
-				�i���A���^�C���X�V�̓T�[�o�[�ɕ��ׂ�������̂ŁA1��1��X�V����B�j
-				�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
-			�_��
-				�J���Ă���_�Ђ̈ꗗ
-				�i���O���^�b�v����ƁA�Ր_���y�[�W�ɑJ�ڂ���B�j
-			���j�E�`��
-				���[�U�[�����e�ł���B
-				�i���F���ɂ��邱�Ƃ���������B�j
-			�n��
-				���A��A�q�ȂǁA��e���܂ŕ\������B
-				�i���O���^�b�v����ƁA�Ր_���y�[�W�ɑJ�ڂ���B�j
-			�Q�q��
-				�S���[�U�[�̎Q�q�����\�������B
-					�{��
-					���T
-					����
-					���N
-					�݌v
-			�����L���O
-				�Q�q���̏�ʃ��[�U�[��5�ʂ܂ŕ\�������B
-				�^�b�v����Ƃ��̃y�C�����S��ʂɂȂ��đS���ʂ��\�������B
-				�i���A���^�C���X�V�̓T�[�o�[�ɕ��ׂ�������̂ŁA1��1��X�V����B�j
-				�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
+	- 祭神情報
+		以下の情報が表示される。
+			名前
+				漢字と読み仮名
+			サムネイル画像
+				図鑑に登録された祭神には画像をアップロードできる。
+				（1人1祭神1枚まで、などの制限を設ける。）
+				（承認制にすることも検討する。）
+				画像には投票（いいね／Good）でき、投票ランキング一位の画像がサムネイルとして採用される。
+				（リアルタイム更新はサーバーに負荷がかかるので、1日1回更新する。）
+				（名前をタップすると、ユーザー情報ページに遷移する。）
+			神社
+				祀られている神社の一覧
+				（名前をタップすると、祭神情報ページに遷移する。）
+			歴史・伝承
+				ユーザーが投稿できる。
+				（承認制にすることも検討する。）
+			系譜
+				父、母、子など、一親等まで表示する。
+				（名前をタップすると、祭神情報ページに遷移する。）
+			参拝数
+				全ユーザーの参拝数が表示される。
+					本日
+					今週
+					今月
+					今年
+					累計
+			ランキング
+				参拝数の上位ユーザーが5位まで表示される。
+				タップするとこのペインが全画面になって全順位が表示される。
+				（リアルタイム更新はサーバーに負荷がかかるので、1日1回更新する。）
+				（名前をタップすると、ユーザー情報ページに遷移する。）
 
-- ���[�U�[
-	�ȉ��̏�񂪕\�������B
-		���O
+- ユーザー
+	以下の情報が表示される。
+		名前
 		ID
-		���C�ɓ���_�Ђ̃T���l�C���摜�ƎQ�q��
-		���C�ɓ���Ր_�̃T���l�C���摜�ƎQ�q��
-		�l���̍�
-			�̍��̗�
-				���s�̐_�Ђ�S�ĎQ�q
-				���s����̐_�Ђ�S�ĎQ�q
-				�����Ꮯ�������V�E�䎨�����J��_�Ђ�S�ĎQ�q
-				2019�N�L����א_�ЎQ�q�����L���O1��
-				�ȂǁB
-				�i���O���^�b�v����ƁA�_�Џ��E�Ր_���y�[�W�ɑJ�ڂ���B�j
-				�i���s����s����Ȃǂ̒n�於���^�b�v����ƁA���̒n��̐_�Јꗗ�y�[�W�ɑJ�ڂ���B�j
-		�Q�q����ʐ_��
-			5�ʂ܂ŕ\��
-			�i���O���^�b�v����ƁA�_�Џ��y�[�W�ɑJ�ڂ���B�j
-		�Q�q����ʍՐ_
-			5�ʂ܂ŕ\��
-			�i���O���^�b�v����ƁA�Ր_���y�[�W�ɑJ�ڂ���B�j
-		�t�H���[���Ă��郆�[�U�[��
-			�^�b�v����ƃ��[�U�[�̈ꗗ���\�������B
-			�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
-		�t�H���[����Ă��郆�[�U�[��
-			�^�b�v����ƃ��[�U�[�̈ꗗ���\�������B
-			�i���O���^�b�v����ƁA���[�U�[���y�[�W�ɑJ�ڂ���B�j
-	�t�H���[�E�A���t�H���[���\
+		お気に入り神社のサムネイル画像と参拝数
+		お気に入り祭神のサムネイル画像と参拝数
+		獲得称号
+			称号の例
+				大阪市の神社を全て参拝
+				大阪市西区の神社を全て参拝
+				正勝吾勝勝速日天忍穂耳命を祀る神社を全て参拝
+				2019年豊中稲荷神社参拝ランキング1位
+				など。
+				（名前をタップすると、神社情報・祭神情報ページに遷移する。）
+				（大阪市や大阪市西区などの地域名をタップすると、その地域の神社一覧ページに遷移する。）
+		参拝数上位神社
+			5位まで表示
+			（名前をタップすると、神社情報ページに遷移する。）
+		参拝数上位祭神
+			5位まで表示
+			（名前をタップすると、祭神情報ページに遷移する。）
+		フォローしているユーザー数
+			タップするとユーザーの一覧が表示される。
+			（名前をタップすると、ユーザー情報ページに遷移する。）
+		フォローされているユーザー数
+			タップするとユーザーの一覧が表示される。
+			（名前をタップすると、ユーザー情報ページに遷移する。）
+	フォロー・アンフォローが可能
 
-- �ݒ�
-	- �N������J����(�f�t�H���g: OFF)
-	- ���ʂ����J����(�f�t�H���g: OFF)
-	- �Q�q�������J����(�f�t�H���g: OFF)
-	- �t�H���[�����F���ɂ���(�f�t�H���g: OFF)
-	- �Q�q���O��\������(�f�t�H���g: ON)
+- 設定
+	- 年齢を公開する(デフォルト: OFF)
+	- 性別を公開する(デフォルト: OFF)
+	- 参拝数を公開する(デフォルト: OFF)
+	- フォローを承認制にする(デフォルト: OFF)
+	- 参拝ログを表示する(デフォルト: ON)
 
-## �y�q
-	��T�Ԃ�1��A�S���̔C�ӂ̐_�Ђɗy�q�ł���B
+## 遥拝
+	一週間に1回、全国の任意の神社に遥拝できる。
 
-## �ۋ��v�f
-- 1��100�~/��
-	1�����ƂɎQ�q�\�ȉ~�̔��a��100m�傫���Ȃ�B
-	1�����Ƃɗy�q�\�Ȑ_�Ђ̐���1������B
+## 課金要素
+- 1口100円/月
+	1口ごとに参拝可能な円の半径が100m大きくなる。
+	1口ごとに遥拝可能な神社の数が1つ増える。
 
 
-# �Z�p�X�^�b�N
+# 技術スタック
 
-## �t�����g�G���h�i�X�}�z�A�v���j
-- �t���[�����[�N: React Native (Bare Workflow)
-- ����: TypeScript
-- �n�}���C�u����: MapLibre GL Native
-- ��ԊǗ�: Zustand or Redux Toolkit
-- UI�R���|�[�l���g: React Native Paper�i�}�e���A���x�[�X�j
-- �f�o�b�O�x��: Flipper + React DevTools
+## フロントエンド（スマホアプリ）
+- フレームワーク: React Native (Bare Workflow)
+- 言語: TypeScript
+- 地図ライブラリ: MapLibre GL Native
+- 状態管理: Zustand or Redux Toolkit
+- UIコンポーネント: React Native Paper（マテリアルベース）
+- デバッグ支援: Flipper + React DevTools
 
-## �ʒu���E��Ԍ���
-- �T�[�o�[��DB: PostgreSQL 15 + PostGIS�i��ԃN�G���p�j
-- API: `/shrines/nearby?lat=xxx&lon=yyy&radius=100` �̌`���Ŏ擾
+## 位置情報・空間検索
+- サーバー側DB: PostgreSQL 15 + PostGIS（空間クエリ用）
+- API: `/shrines/nearby?lat=xxx&lon=yyy&radius=100` の形式で取得
 
-## �o�b�N�G���h�iAPI�T�[�o�[�j
-- ����/�t���[�����[�N: Node.js (Express) + TypeScript
-- DB�ڑ�: Prisma ORM�iPostgreSQL�Ή��j
-- �F��: Firebase Auth�i�����EGoogle�T�C���C�����Ή��j
-- �X�g���[�W�A�g: Firebase Storage�i�摜���e�p�j
+## バックエンド（APIサーバー）
+- 言語/フレームワーク: Node.js (Express) + TypeScript
+- DB接続: Prisma ORM（PostgreSQL対応）
+- 認証: Firebase Auth（匿名・Googleサインイン等対応）
+- ストレージ連携: Firebase Storage（画像投稿用）
 
-## �_�Ѓf�[�^�\�[�X�i�����C���|�[�g�j
+## 神社データソース（初期インポート）
 - OpenStreetMap (amenity=place_of_worship, religion=shinto)
-- ���y�n���@ �_��POI�f�[�^�i�K�v�ɉ����ĕ⊮�j
-- �蓮�f�[�^�⊮�iCSV����PostGIS�ւ̈ꊇ�o�^�Ή��j
+- 国土地理院 神社POIデータ（必要に応じて補完）
+- 手動データ補完（CSVからPostGISへの一括登録対応）
 
-## �C���t���\���i�����J���`�X�P�[���Ή��܂Łj
-- �J���E���؊�: Docker + Docker Compose�iDB, API, Admin UI�j
-- �{�Ԋ��i�I�����j:
-  - Firebase Hosting + Cloud Run�i�R�X�g�d���j
-  - Render / Railway / Fly.io�i��y��PaaS�j
-  - AWS (ECS + RDS)�i�X�P�[���r���e�B�D��j
+## インフラ構成（初期開発～スケール対応まで）
+- 開発・検証環境: Docker + Docker Compose（DB, API, Admin UI）
+- 本番環境（選択肢）:
+  - Firebase Hosting + Cloud Run（コスト重視）
+  - Render / Railway / Fly.io（手軽なPaaS）
+  - AWS (ECS + RDS)（スケーラビリティ優先）
 
-## CI/CD�E�J���c�[��
-- �\�[�X�Ǘ�: GitHub + GitHub Actions
+## CI/CD・開発ツール
+- ソース管理: GitHub + GitHub Actions
 - Lint/Format: ESLint, Prettier
-- �^����: TypeScript + tsconfig.strict
-- �G�f�B�^: VSCode / Cursor�iTypeScript�T�|�[�g�����ς݁j
-- �G�~�����[�^: Android Studio / Xcode Simulator�iBare�p�j
+- 型検査: TypeScript + tsconfig.strict
+- エディタ: VSCode / Cursor（TypeScriptサポート強化済み）
+- エミュレータ: Android Studio / Xcode Simulator（Bare用）
 
-## �e�X�g�E�i���Ǘ�
-- �P�̃e�X�g: Vitest or Jest
-- E2E�e�X�g: Detox�iReact Native�p�j
-- �^�x�[�X����: Zod + React Hook Form�i���e�o���f�[�V�����j
+## テスト・品質管理
+- 単体テスト: Vitest or Jest
+- E2Eテスト: Detox（React Native用）
+- 型ベース検証: Zod + React Hook Form（投稿バリデーション）
 
-## �����Ή��i�I�v�V�����j
-- Web�őΉ�: Expo Web �������� React Native for Web
-- �Ǘ����: Next.js + shadcn/ui�i�_�Џ��ҏW�E���F�Ȃǁj
-- ���e�摜AI����: Python + FastAPI�i�O���T�[�o�[�ŕ��ށE�⏕�j
+## 将来対応（オプション）
+- Web版対応: Expo Web もしくは React Native for Web
+- 管理画面: Next.js + shadcn/ui（神社情報編集・承認など）
+- 投稿画像AI分類: Python + FastAPI（外部サーバーで分類・補助）
 
