@@ -1,0 +1,50 @@
+// Prisma schema for Amana GPS shrine collection app
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  visits    Visit[]
+  createdAt DateTime @default(now())
+}
+
+model Shrine {
+  id        Int      @id @default(autoincrement())
+  name      String
+  latitude  Float
+  longitude Float
+  deities   ShrineDeity[]
+  visits    Visit[]
+}
+
+model Deity {
+  id      Int      @id @default(autoincrement())
+  name    String
+  shrines ShrineDeity[]
+}
+
+model ShrineDeity {
+  shrine   Shrine @relation(fields: [shrineId], references: [id])
+  shrineId Int
+  deity    Deity  @relation(fields: [deityId], references: [id])
+  deityId  Int
+  @@id([shrineId, deityId])
+}
+
+model Visit {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  shrine    Shrine   @relation(fields: [shrineId], references: [id])
+  shrineId  Int
+  visitedAt DateTime @default(now())
+  @@index([userId, shrineId, visitedAt])
+}
