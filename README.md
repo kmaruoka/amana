@@ -41,11 +41,12 @@ npm run dev
 
 The API will be available at `http://localhost:3000`.
 
-## Endpoint
+## Endpoints
 
-`GET /shrines/nearby?lat=LAT&lon=LON&radius=R`
-
-Returns shrines within `radius` meters of the given coordinates.
+- `GET /shrines/nearby?lat=LAT&lon=LON&radius=R` - Find shrines within `radius` meters of the given coordinates.
+- `GET /shrines` - List all shrines with their deities.
+- `POST /visits` - Record that a user visited a shrine. Body parameters: `userId`, `shrineId`.
+- `GET /users/:userId/visits` - List visits for the specified user.
 
 ## Mobile App
 
