@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import MapLibreGL from 'maplibre-react-native';
+import MapboxGL from '@rnmapbox/maps';
 
 export default function MapScreen() {
   return (
     <View style={styles.container}>
-      <MapLibreGL.MapView style={styles.map} />
+      <MapboxGL.MapView style={styles.map} />
     </View>
   );
 }
