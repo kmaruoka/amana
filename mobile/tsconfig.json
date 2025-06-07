@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "lib": ["es2019"],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["react", "react-native"],
+    "baseUrl": "./src"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
