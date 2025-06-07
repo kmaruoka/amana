@@ -46,3 +46,19 @@ The API will be available at `http://localhost:3000`.
 `GET /shrines/nearby?lat=LAT&lon=LON&radius=R`
 
 Returns shrines within `radius` meters of the given coordinates.
+
+## Mobile App
+
+A minimal React Native (bare workflow) project is included under `mobile/`. It uses TypeScript, React Native Paper and React Navigation to provide a bottom tab interface with placeholder screens.
+
+### Running the app
+
+Install dependencies inside the `mobile` directory and run the standard React Native commands:
+
+```bash
+cd mobile
+npm install
+npm run android   # or npm run ios
+```
+
+This will start the Metro bundler and launch the app in an emulator or device.
