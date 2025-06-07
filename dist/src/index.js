@@ -63,6 +63,20 @@ app.get('/deities/:id', async (req, res) => {
         return res.status(404).json({ error: 'Deity not found' });
     res.json(deity);
 });
+app.get('/shrines/:id/ranking', async (req, res) => {
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid shrine id' });
+    }
+    const ranking = await prisma.$queryRawUnsafe(`SELECT "userId", "User"."name", COUNT(*) AS count
+     FROM "Visit"
+     JOIN "User" ON "Visit"."userId" = "User"."id"
+     WHERE "Visit"."shrineId" = $1
+     GROUP BY "userId", "User"."name"
+     ORDER BY count DESC
+     LIMIT 5`, id);
+    res.json(ranking);
+});
 app.get('/users', async (_req, res) => {
     const users = await prisma.user.findMany();
     res.json(users);
