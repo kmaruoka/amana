@@ -69,11 +69,17 @@ A minimal React Native (bare workflow) project is included under `mobile/`. It u
 
 ### Running the app
 
-Install dependencies inside the `mobile` directory and run the standard React Native commands:
+Install dependencies inside the `mobile` directory and run the standard React Native commands.
+If the native project folders are missing you'll need to create them first.
 
 ```bash
 cd mobile
 npm install
+# Native directories (`android` and `ios`) are not included in the repo.
+# Generate them with the React Native CLI if they don't exist.
+npx react-native init AmanaTmp --skip-install
+mv AmanaTmp/android AmanaTmp/ios .
+rm -rf AmanaTmp
 npm run android   # or npm run ios
 ```
 
