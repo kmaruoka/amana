@@ -76,10 +76,14 @@ If the native project folders are missing you'll need to create them first.
 cd mobile
 npm install
 # Native directories (`android` and `ios`) are not included in the repo.
-# Generate them with the React Native CLI if they don't exist.
+# Generate them with the React Native CLI if they don't exist. The init command
+# downloads a template from npm, so make sure you have network access.
 npx react-native init AmanaTmp --skip-install
 mv AmanaTmp/android AmanaTmp/ios .
 rm -rf AmanaTmp
+# If you cannot run the init command (e.g. in an offline environment), copy
+# pre-generated `android` and `ios` folders from a machine where the command
+# succeeded.
 npm run android   # or npm run ios
 ```
 
