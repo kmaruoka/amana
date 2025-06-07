@@ -21,6 +21,9 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 npm install
 ```
 
+This project is configured to use **CommonJS** modules. Ensure `package.json`
+contains `"type": "commonjs"` when running the server with `ts-node-dev`.
+
 2. Generate Prisma client and apply migrations:
 
 ```bash
