@@ -45,6 +45,12 @@ The API will be available at `http://localhost:3000`.
 
 - `GET /shrines/nearby?lat=LAT&lon=LON&radius=R` - Find shrines within `radius` meters of the given coordinates.
 - `GET /shrines` - List all shrines with their deities.
+- `GET /deities` - List all deities with the shrines they appear in.
+- `GET /users` - List all users.
+- `GET /shrines/:id` - Retrieve a single shrine with its deities.
+- `GET /deities/:id` - Retrieve a single deity with its shrines.
+- `POST /users` - Create a new user. Body parameters: `name`.
+- `GET /users/:userId` - Get details for a single user.
 - `POST /visits` - Record that a user visited a shrine. Body parameters: `userId`, `shrineId`.
 - `GET /users/:userId/visits` - List visits for the specified user.
 
