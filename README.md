@@ -7,6 +7,9 @@ This repository contains a minimal Express + Prisma API server for the shrine co
 - Node.js 18+
 - PostgreSQL 15 with PostGIS
 
+The server is configured for CommonJS modules. `npm run dev` will launch it via
+`ts-node-dev` using the CJS build settings.
+
 Set the database connection string via `DATABASE_URL` environment variable. For example:
 
 ```
@@ -41,6 +44,8 @@ npm run seed
 ```bash
 npm run dev
 ```
+
+This command runs the server in CommonJS mode using `ts-node-dev`.
 
 The API will be available at `http://localhost:3000`.
 
