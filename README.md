@@ -53,6 +53,7 @@ The API will be available at `http://localhost:3000`.
 - `GET /users/:userId` - Get details for a single user.
 - `POST /visits` - Record that a user visited a shrine. Body parameters: `userId`, `shrineId`.
 - `GET /users/:userId/visits` - List visits for the specified user.
+- `GET /shrines/:id/ranking` - Get the top 5 visitors for the shrine.
 
 ## Mobile App
 
