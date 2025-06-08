@@ -151,3 +151,26 @@ Gradle に追加する必要があります。設定を行わない場合、
 
 これらの設定を行った後に `npm run android` を実行すると、Mapbox 関連の依存解決が
 正常に行われるようになります。
+
+### Gradle キャッシュを削除する (Windows)
+
+ビルドがキャッシュの破損などで失敗する場合、次の手順で Gradle キャッシュを削除し
+ます。
+
+1. プロジェクトのルートで `gradlew --stop` を実行します。
+2. タスク マネージャーで `java` と `gradle` のプロセスが残っていないことを確認しま
+   す。
+3. PowerShell で以下のコマンドを実行してキャッシュを削除します。
+
+   ```powershell
+   Remove-Item -Recurse -Force $env:USERPROFILE\.gradle
+   ```
+
+4. 削除できない場合は PC を再起動してから再度上記コマンドを実行します。
+
+`GRADLE_USER_HOME` を設定すると、キャッシュディレクトリを別の場所に変更できます。
+例:
+
+```powershell
+$env:GRADLE_USER_HOME = "D:\\gradle-cache"
+```
