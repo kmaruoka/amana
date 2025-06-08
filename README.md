@@ -134,9 +134,10 @@ sdk.dir=C:\\Users\\<username>\\AppData\\Local\\Android\\Sdk
 Gradle に追加する必要があります。設定を行わない場合、
 `com.mapbox.maps:android` などの依存関係を取得できずビルドが失敗します。
 
-1. [Mapbox アカウント](https://www.mapbox.com/) でダウンロードトークンを取得し、
-   `mobile/android/gradle.properties`（または `~/.gradle/gradle.properties`）に
-   `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>` を追記します。
+1. [Mapbox アカウント](https://www.mapbox.com/) で **DOWNLOADS:READ** 権限付きの
+   トークンを生成し、`mobile/android/gradle.properties`（または
+   `~/.gradle/gradle.properties`）に `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>`
+   を追記します。デフォルトの Public Token では依存取得に失敗します。
 2. `mobile/android/build.gradle` の `allprojects.repositories` に次のブロックを
    追加します。
 
@@ -183,3 +184,28 @@ Gradle に追加する必要があります。設定を行わない場合、
 ```powershell
 $env:GRADLE_USER_HOME = "D:\\gradle-cache"
 ```
+
+### Android API レベルの更新
+
+`react-native-screens` や `@rnmapbox/maps` の新しいバージョンを利用すると、
+ビルド時に `:app:checkDebugAarMetadata` タスクが失敗することがあります。
+これは依存ライブラリが **Android API 34** 以上でのビルドを要求しているためです。
+
+`npx react-native init` で生成した直後のプロジェクトでは `compileSdkVersion`
+および `targetSdkVersion` が `33` になっているので、次のように
+`mobile/android/build.gradle` の設定を更新してください。
+
+```gradle
+android {
+    compileSdkVersion = 34
+
+    defaultConfig {
+        targetSdkVersion = 34
+        // その他の設定
+    }
+}
+```
+
+変更後に `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
+改めて `npm run android` を実行することで
+ビルドが通るようになります。
