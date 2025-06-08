@@ -204,3 +204,8 @@ android {
 変更後に Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
 改めて `npm run android` を実行することで
 ビルドが通るようになります。
+
+## Git運用ルール
+
+- ブランチ名にはASCII文字のみを使用してください。日本語などの2バイト文字は使わないでください。
+- 例: `feature/login`, `fix/api-timeout` のように英数字とハイフン、アンダースコアのみを利用します。
