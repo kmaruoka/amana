@@ -67,6 +67,36 @@ API は `http://localhost:3000` で利用可能になります。
 
 `mobile/` フォルダーには、TypeScript と React Native Paper、React Navigation を用いた最小限の React Native (Bare Workflow) プロジェクトが含まれています。
 
+### クリーンな状態からAndroid/iOSを起動する手順
+
+1. このリポジトリを `git clone` します。
+2. `cd mobile` でモバイル用ディレクトリに移動し、`npm install` を実行します。
+3. `android` と `ios` フォルダーが無い場合は次のコマンドで生成して配置します。
+
+   ```bash
+   npx react-native init AmanaTmp --template react-native@0.72.7
+   mv AmanaTmp/android ./android
+   mv AmanaTmp/ios ./ios
+   rm -rf AmanaTmp
+   ```
+
+4. Android SDK のパスを `ANDROID_HOME` または `android/local.properties` に設定し、`npx react-native doctor` で環境を確認します。
+5. `mobile/android/gradle.properties` に `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>` を追記し、`mobile/android/build.gradle` の `allprojects.repositories` に Mapbox の Maven ブロックを追加します。
+
+   ```gradle
+   maven {
+       url 'https://api.mapbox.com/downloads/v2/releases/maven'
+       authentication { basic(BasicAuthentication) }
+       credentials {
+           username = 'mapbox'
+           password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''
+       }
+   }
+   ```
+
+6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、`./gradlew clean` を実行します。
+7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
+
 ### アプリの実行方法
 
 `mobile` ディレクトリで依存パッケージをインストールし、通常の React Native コマンドを実行してください。ネイティブプロジェクトのフォルダーが存在しない場合は、まず生成する必要があります。
