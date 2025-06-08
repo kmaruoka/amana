@@ -81,9 +81,9 @@ API は `http://localhost:3000` で利用可能になります。
    ```
 
 4. Android SDK のパスを `ANDROID_HOME` または `android/local.properties` に設定し、`npx react-native doctor` で環境を確認します。
-5. `npm run setup-gradle` を実行し、Gradle 設定を自動で更新します（`mobile` ディレクトリで実行）。`.env` に
-   `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、`mobile/android/gradle.properties`
-   と `build.gradle` が書き換えられます。
+5. プロジェクトのルートディレクトリで `npm run setup-gradle` を実行し、Gradle
+   設定を自動で更新します。`.env` に `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、
+   `mobile/android/gradle.properties` と `build.gradle` が書き換えられます。
 
 6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` を実行します。
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
@@ -157,8 +157,9 @@ Gradle に追加する必要があります。設定を行わない場合、
 
 1. [Mapbox アカウント](https://www.mapbox.com/) で **DOWNLOADS:READ** 権限付きの
    トークンを生成し、`.env` の `MAPBOX_DOWNLOADS_TOKEN` に設定します。
-2. Android プロジェクト生成後に `npm run setup-gradle` を実行すると（`mobile` ディレクトリで実行）、
-   `gradle.properties` と `build.gradle` に必要な設定が自動で追記されます。
+2. Android プロジェクト生成後に、プロジェクトのルートディレクトリで
+   `npm run setup-gradle` を実行すると、`gradle.properties` と
+   `build.gradle` に必要な設定が自動で追記されます。
 
 これらを行ったあと `npm run android` を実行すれば、Mapbox 関連の依存解決が
 正常に行われるようになります。
