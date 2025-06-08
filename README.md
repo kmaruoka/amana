@@ -179,6 +179,14 @@ Gradle に追加する必要があります。設定を行わない場合、
    cmd /c "rmdir /s /q \"%USERPROFILE%\\.gradle\""
    ```
 
+5. プロジェクトディレクトリに生成された `.gradle` フォルダーも削除します。
+
+   ```powershell
+   Remove-Item -Recurse -Force .gradle
+   # もしくは
+   cmd /c "rmdir /s /q .gradle"
+   ```
+
 `GRADLE_USER_HOME` を設定すると、キャッシュディレクトリを別の場所に変更できます。
 例:
 
