@@ -94,7 +94,7 @@ API は `http://localhost:3000` で利用可能になります。
    }
    ```
 
-6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、`./gradlew clean` を実行します。
+6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` を実行します。
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
 
 ### アプリの実行方法
@@ -190,8 +190,9 @@ Gradle に追加する必要があります。設定を行わない場合、
 ビルドがキャッシュの破損などで失敗する場合、次の手順で Gradle キャッシュを削除し
 ます。
 
-1. プロジェクトのルートで `gradlew --stop` を実行します。
-   Windows 環境では同じ場所で `.\gradlew.bat --stop` を実行してください。
+1. Android プロジェクト (`mobile/android` など `gradlew` が置かれているフォルダー) の
+   ルートで `gradlew --stop` を実行します。
+   Windows 環境でも同じ場所で `.\gradlew.bat --stop` を実行します。
 2. タスク マネージャーで `java` と `gradle` のプロセスが残っていないことを確認しま
    す。
 3. PowerShell で以下のコマンドを実行してキャッシュを削除します。
@@ -209,7 +210,7 @@ Gradle に追加する必要があります。設定を行わない場合、
    cmd /c "rmdir /s /q \"%USERPROFILE%\\.gradle\""
    ```
 
-5. プロジェクトディレクトリに生成された `.gradle` フォルダーも削除します。
+5. Android プロジェクトディレクトリ (`mobile/android`) に生成された `.gradle` フォルダーも削除します。
 
    ```powershell
    Remove-Item -Recurse -Force .gradle
@@ -245,6 +246,6 @@ android {
 }
 ```
 
-変更後に `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
+変更後に Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
 改めて `npm run android` を実行することで
 ビルドが通るようになります。
