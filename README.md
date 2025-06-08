@@ -17,7 +17,9 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ## セットアップ手順
 
-1. 依存パッケージをインストールします（ネットワークアクセスが必要です）。
+1. `.env.example` を `.env` にコピーして、各変数の値を設定します。
+
+2. 依存パッケージをインストールします（ネットワークアクセスが必要です）。
 
 ```bash
 npm install
@@ -25,19 +27,19 @@ npm install
 
 このプロジェクトは **CommonJS** モジュールを使用するよう設定されています。`ts-node-dev` でサーバーを実行する際は `package.json` に `"type": "commonjs"` が含まれていることを確認してください。
 
-2. Prisma クライアントを生成してマイグレーションを適用します。
+3. Prisma クライアントを生成してマイグレーションを適用します。
 
 ```bash
 npx prisma migrate dev --name init
 ```
 
-3. テストデータを投入します。
+4. テストデータを投入します。
 
 ```bash
 npm run seed
 ```
 
-4. 開発サーバーを起動します。
+5. 開発サーバーを起動します。
 
 ```bash
 npm run dev
