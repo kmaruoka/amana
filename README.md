@@ -77,11 +77,11 @@ API は `http://localhost:3000` で利用可能になります。
    npx react-native init AmanaTmp --template react-native@0.72.7
    mv AmanaTmp/android ./android
    mv AmanaTmp/ios ./ios
-   rm -rf AmanaTmp
+   rm -rf AmanaTmp    # Windows は `Remove-Item -Recurse -Force AmanaTmp`
    ```
 
 4. Android SDK のパスを `ANDROID_HOME` または `android/local.properties` に設定し、`npx react-native doctor` で環境を確認します。
-5. `npm run setup-gradle` を実行し、Gradle 設定を自動で更新します。`.env` に
+5. `npm run setup-gradle` を実行し、Gradle 設定を自動で更新します（`mobile` ディレクトリで実行）。`.env` に
    `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、`mobile/android/gradle.properties`
    と `build.gradle` が書き換えられます。
 
@@ -157,7 +157,7 @@ Gradle に追加する必要があります。設定を行わない場合、
 
 1. [Mapbox アカウント](https://www.mapbox.com/) で **DOWNLOADS:READ** 権限付きの
    トークンを生成し、`.env` の `MAPBOX_DOWNLOADS_TOKEN` に設定します。
-2. Android プロジェクト生成後に `npm run setup-gradle` を実行すると、
+2. Android プロジェクト生成後に `npm run setup-gradle` を実行すると（`mobile` ディレクトリで実行）、
    `gradle.properties` と `build.gradle` に必要な設定が自動で追記されます。
 
 これらを行ったあと `npm run android` を実行すれば、Mapbox 関連の依存解決が
