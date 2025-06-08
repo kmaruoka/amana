@@ -90,7 +90,11 @@ Remove-Item -Recurse -Force AmanaTmp
    設定を自動で更新します。`.env` に `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、
    `mobile/android/gradle.properties` と `build.gradle` が書き換えられます。
 
-6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` を実行します。
+6. ビルドエラーが発生する場合は `mobile/android/build.gradle` を開き、
+   `compileSdkVersion` と `targetSdkVersion` を **34** に更新します。
+   変更後は Android プロジェクト (`mobile/android`) のルートで
+   `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
+   詳細は後述の「Android API レベルの更新」節も参照します。
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
 
 ### アプリの実行方法
@@ -179,6 +183,16 @@ Gradle に追加する必要があります。設定を行わない場合、
 ```powershell
 $env:GRADLE_USER_HOME = "D:\\gradle-cache"
 ```
+
+### Windows でエミュレータが起動しない場合
+
+以下のポイントを確認してください。
+
+1. Android Studio の AVD Manager からエミュレータを一度起動しておきます。
+2. `ANDROID_HOME` または `local.properties` に SDK のパスが正しく設定されているか確認します。
+3. 上記手順 6 で紹介した `compileSdkVersion` と `targetSdkVersion` の更新後、
+   `mobile/android` のルートで `./gradlew clean`（Windows は `\.\gradlew.bat clean`）を実行します。
+4. PowerShell から `npm run android` を再実行し、エミュレータにアプリがインストールされるか確認します。
 
 ### Android API レベルの更新
 
