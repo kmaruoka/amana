@@ -1,91 +1,127 @@
 # Amana API
 
-This repository contains a minimal Express + Prisma API server for the shrine collection application described in the project specification. It defines the core database schema and provides an endpoint to query nearby shrines.
+このリポジトリには、プロジェクト仕様書で説明されている神社参拝アプリ向けの最小限の Express + Prisma API サーバーが含まれています。コアとなるデータベーススキーマを定義し、近くの神社を取得するエンドポイントを提供します。
 
-## Requirements
+## 必要環境
 
-- Node.js 18+
-- PostgreSQL 15 with PostGIS
+- Node.js 18 以上
+- PostgreSQL 15 （PostGIS 拡張付き）
 
-The server is configured for CommonJS modules. `npm run dev` will launch it via
-`ts-node-dev` using the CJS build settings.
+サーバーは CommonJS モジュールとして構成されており、`npm run dev` を実行すると `ts-node-dev` を介して起動します。
 
-Set the database connection string via `DATABASE_URL` environment variable. For example:
+データベース接続文字列は `DATABASE_URL` 環境変数で設定します。例:
 
 ```
 DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 ```
 
-## Setup
+## セットアップ手順
 
-1. Install dependencies (network access required):
+1. 依存パッケージをインストールします（ネットワークアクセスが必要です）。
 
 ```bash
 npm install
 ```
 
-This project is configured to use **CommonJS** modules. Ensure `package.json`
-contains `"type": "commonjs"` when running the server with `ts-node-dev`.
+このプロジェクトは **CommonJS** モジュールを使用するよう設定されています。`ts-node-dev` でサーバーを実行する際は `package.json` に `"type": "commonjs"` が含まれていることを確認してください。
 
-2. Generate Prisma client and apply migrations:
+2. Prisma クライアントを生成してマイグレーションを適用します。
 
 ```bash
 npx prisma migrate dev --name init
 ```
 
-3. Seed test data:
+3. テストデータを投入します。
 
 ```bash
 npm run seed
 ```
 
-4. Start the development server:
+4. 開発サーバーを起動します。
 
 ```bash
 npm run dev
 ```
 
-This command runs the server in CommonJS mode using `ts-node-dev`.
+このコマンドは `ts-node-dev` を用いて CommonJS モードでサーバーを実行します。
 
-The API will be available at `http://localhost:3000`.
+API は `http://localhost:3000` で利用可能になります。
 
-## Endpoints
+## エンドポイント
 
-- `GET /shrines/nearby?lat=LAT&lon=LON&radius=R` - Find shrines within `radius` meters of the given coordinates.
-- `GET /shrines` - List all shrines with their deities.
-- `GET /deities` - List all deities with the shrines they appear in.
-- `GET /users` - List all users.
-- `GET /shrines/:id` - Retrieve a single shrine with its deities.
-- `GET /deities/:id` - Retrieve a single deity with its shrines.
-- `POST /users` - Create a new user. Body parameters: `name`.
-- `GET /users/:userId` - Get details for a single user.
-- `POST /visits` - Record that a user visited a shrine. Body parameters: `userId`, `shrineId`.
-- `GET /users/:userId/visits` - List visits for the specified user.
-- `GET /shrines/:id/ranking` - Get the top 5 visitors for the shrine.
+- `GET /shrines/nearby?lat=LAT&lon=LON&radius=R` - 指定した座標から半径 `R` メートル以内の神社を検索
+- `GET /shrines` - 神社と祭神の一覧を取得
+- `GET /deities` - 祭神と、それが祀られている神社一覧を取得
+- `GET /users` - ユーザー一覧を取得
+- `GET /shrines/:id` - 単一の神社情報（祭神付き）を取得
+- `GET /deities/:id` - 単一の祭神情報（関連神社付き）を取得
+- `POST /users` - 新規ユーザーを作成（ボディに `name` を指定）
+- `GET /users/:userId` - ユーザー詳細を取得
+- `POST /visits` - ユーザーが神社を参拝した記録を作成（`userId` と `shrineId` を指定）
+- `GET /users/:userId/visits` - 指定ユーザーの参拝履歴を取得
+- `GET /shrines/:id/ranking` - その神社の参拝上位5人を取得
 
-## Mobile App
+## モバイルアプリ
 
-A minimal React Native (bare workflow) project is included under `mobile/`. It uses TypeScript, React Native Paper and React Navigation to provide a bottom tab interface with placeholder screens.
+`mobile/` フォルダーには、TypeScript と React Native Paper、React Navigation を用いた最小限の React Native (Bare Workflow) プロジェクトが含まれています。
 
-### Running the app
+### アプリの実行方法
 
-Install dependencies inside the `mobile` directory and run the standard React Native commands.
-If the native project folders are missing you'll need to create them first.
+`mobile` ディレクトリで依存パッケージをインストールし、通常の React Native コマンドを実行してください。ネイティブプロジェクトのフォルダーが存在しない場合は、まず生成する必要があります。
+
+#### Linux / macOS
 
 ```bash
 cd mobile
 npm install
-# Native directories (`android` and `ios`) are not included in the repo.
-# Generate them with the React Native CLI if they don't exist. The init command
-# downloads a template from npm, so make sure you have network access.
-# React Native 0.72.7 worked well during testing, so we specify it explicitly.
+# リポジトリには `android` と `ios` ディレクトリが含まれていません。
+# 存在しない場合は React Native CLI を使って生成してください。
+# このコマンドは npm からテンプレートをダウンロードするため、ネットワーク接続が必要です。
+# 動作確認時には React Native 0.72.7 を使用したため、バージョンを指定しています。
 npx react-native init AmanaTmp --template react-native@0.72.7
-mv AmanaTmp/android AmanaTmp/ios .
+mv AmanaTmp/android ./android
+mv AmanaTmp/ios ./ios
 rm -rf AmanaTmp
-# If you cannot run the init command (e.g. in an offline environment), copy
-# pre-generated `android` and `ios` folders from a machine where the command
-# succeeded.
-npm run android   # or npm run ios
+# `init` コマンドを実行できない環境（オフライン等）の場合は、
+# コマンドが成功した別環境から生成済みの `android` と `ios` をコピーしてください。
+npm run android   # または npm run ios
 ```
 
-This will start the Metro bundler and launch the app in an emulator or device.
+#### Windows (PowerShell)
+
+```powershell
+cd mobile
+npm install
+# リポジトリには `android` と `ios` ディレクトリが含まれていません。
+# 存在しない場合は React Native CLI を使って生成してください。
+npx react-native init AmanaTmp --template react-native@0.72.7
+Move-Item AmanaTmp/android ./android
+Move-Item AmanaTmp/ios ./ios
+Remove-Item -Recurse -Force AmanaTmp
+# `init` コマンドを実行できない環境（オフライン等）の場合は、
+# コマンドが成功した別環境から生成済みの `android` と `ios` をコピーしてください。
+npm run android   # または npm run ios
+```
+
+上記コマンドを実行すると、Metro Bundler が起動し、エミュレーターまたは実機でアプリが立ち上がります。
+
+### Android 追加設定
+
+`npm run android` 実行時に `"adb" が見つからない` や `SDK location not found` といったエラーが表示される場合、Android SDK のパスが正しく設定されていません。
+
+1. Android Studio をインストールし、Android SDK が導入されていることを確認します。
+2. 環境変数 `ANDROID_HOME` を設定するか、`mobile/android/local.properties` に `sdk.dir=<SDK のパス>` を記述します。
+3. `npx react-native doctor` を実行して環境を確認します。
+4. コマンド実行前に Android Studio からエミュレーターを起動するか、実機を接続してください。
+
+PowerShell 例:
+
+```powershell
+$env:ANDROID_HOME = "C:\Users\<username>\AppData\Local\Android\Sdk"
+```
+
+local.properties 例:
+
+```
+sdk.dir=C:\\Users\\<username>\\AppData\\Local\\Android\\Sdk
+```
