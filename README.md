@@ -168,7 +168,14 @@ Gradle に追加する必要があります。設定を行わない場合、
    Remove-Item -Recurse -Force $env:USERPROFILE\.gradle
    ```
 
-4. 削除できない場合は PC を再起動してから再度上記コマンドを実行します。
+4. 削除できない場合は PC を再起動してから次のコマンドを試します。
+
+   ```powershell
+   Remove-Item -LiteralPath "\\?\$env:USERPROFILE\.gradle" -Recurse -Force
+   Remove-Item -Recurse -Force $env:USERPROFILE\.gradle
+   # もしくは
+   cmd /c "rmdir /s /q \"%USERPROFILE%\\.gradle\""
+   ```
 
 `GRADLE_USER_HOME` を設定すると、キャッシュディレクトリを別の場所に変更できます。
 例:
