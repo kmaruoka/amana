@@ -17,7 +17,7 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ## セットアップ手順
 
-1. `.env.example` を `.env` にコピーして、各変数の値を設定します。
+1. リポジトリに同梱されている `.env` を必要に応じて編集します。基本的な値はあらかじめ設定されているため、API キーなどの機密情報のみ書き換えてください。
 
 2. 依存パッケージをインストールします（ネットワークアクセスが必要です）。
 
@@ -81,18 +81,9 @@ API は `http://localhost:3000` で利用可能になります。
    ```
 
 4. Android SDK のパスを `ANDROID_HOME` または `android/local.properties` に設定し、`npx react-native doctor` で環境を確認します。
-5. `mobile/android/gradle.properties` に `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>` を追記し、`mobile/android/build.gradle` の `allprojects.repositories` に Mapbox の Maven ブロックを追加します。
-
-   ```gradle
-   maven {
-       url 'https://api.mapbox.com/downloads/v2/releases/maven'
-       authentication { basic(BasicAuthentication) }
-       credentials {
-           username = 'mapbox'
-           password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''
-       }
-   }
-   ```
+5. `npm run setup-gradle` を実行し、Gradle 設定を自動で更新します。`.env` に
+   `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、`mobile/android/gradle.properties`
+   と `build.gradle` が書き換えられます。
 
 6. 必要に応じて `compileSdkVersion` と `targetSdkVersion` を `34` に更新後、Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` を実行します。
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
@@ -165,24 +156,11 @@ Gradle に追加する必要があります。設定を行わない場合、
 `com.mapbox.maps:android` などの依存関係を取得できずビルドが失敗します。
 
 1. [Mapbox アカウント](https://www.mapbox.com/) で **DOWNLOADS:READ** 権限付きの
-   トークンを生成し、`mobile/android/gradle.properties`（または
-   `~/.gradle/gradle.properties`）に `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>`
-   を追記します。デフォルトの Public Token では依存取得に失敗します。
-2. `mobile/android/build.gradle` の `allprojects.repositories` に次のブロックを
-   追加します。
+   トークンを生成し、`.env` の `MAPBOX_DOWNLOADS_TOKEN` に設定します。
+2. Android プロジェクト生成後に `npm run setup-gradle` を実行すると、
+   `gradle.properties` と `build.gradle` に必要な設定が自動で追記されます。
 
-   ```gradle
-   maven {
-       url 'https://api.mapbox.com/downloads/v2/releases/maven'
-       authentication { basic(BasicAuthentication) }
-       credentials {
-           username = 'mapbox'
-           password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''
-       }
-   }
-   ```
-
-これらの設定を行った後に `npm run android` を実行すると、Mapbox 関連の依存解決が
+これらを行ったあと `npm run android` を実行すれば、Mapbox 関連の依存解決が
 正常に行われるようになります。
 
 ### Gradle キャッシュを削除する (Windows)
