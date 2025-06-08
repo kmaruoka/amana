@@ -78,12 +78,12 @@ API は `http://localhost:3000` で利用可能になります。
    ```
 3. `android` と `ios` フォルダーが無い場合は次のコマンドで生成して配置します。
 
-   ```bash
-   npx react-native init AmanaTmp --template react-native@0.72.7
-   mv AmanaTmp/android ./android
-   mv AmanaTmp/ios ./ios
-   rm -rf AmanaTmp    # Windows は `Remove-Item -Recurse -Force AmanaTmp`
-   ```
+```powershell
+npx react-native init AmanaTmp --template react-native@0.72.7
+Move-Item AmanaTmp/android ./android -Force
+Move-Item AmanaTmp/ios ./ios -Force
+Remove-Item -Recurse -Force AmanaTmp
+```
 
 4. Android SDK のパスを `ANDROID_HOME` または `android/local.properties` に設定し、`npx react-native doctor` で環境を確認します。
 5. プロジェクトのルートディレクトリで `npm run setup-gradle` を実行し、Gradle
