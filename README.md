@@ -125,3 +125,29 @@ local.properties 例:
 ```
 sdk.dir=C:\\Users\\<username>\\AppData\\Local\\Android\\Sdk
 ```
+
+### Mapbox 関連の依存解決
+
+地図表示には `@rnmapbox/maps` を利用しており、Mapbox の Maven リポジトリを
+Gradle に追加する必要があります。設定を行わない場合、
+`com.mapbox.maps:android` などの依存関係を取得できずビルドが失敗します。
+
+1. [Mapbox アカウント](https://www.mapbox.com/) でダウンロードトークンを取得し、
+   `mobile/android/gradle.properties`（または `~/.gradle/gradle.properties`）に
+   `MAPBOX_DOWNLOADS_TOKEN=<取得したトークン>` を追記します。
+2. `mobile/android/build.gradle` の `allprojects.repositories` に次のブロックを
+   追加します。
+
+   ```gradle
+   maven {
+       url 'https://api.mapbox.com/downloads/v2/releases/maven'
+       authentication { basic(BasicAuthentication) }
+       credentials {
+           username = 'mapbox'
+           password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''
+       }
+   }
+   ```
+
+これらの設定を行った後に `npm run android` を実行すると、Mapbox 関連の依存解決が
+正常に行われるようになります。
