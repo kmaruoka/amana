@@ -70,7 +70,12 @@ API は `http://localhost:3000` で利用可能になります。
 ### クリーンな状態からAndroid/iOSを起動する手順
 
 1. このリポジトリを `git clone` します。
-2. `cd mobile` でモバイル用ディレクトリに移動し、`npm install` を実行します。
+2. モバイル用ディレクトリに移動して依存パッケージをインストールします。
+
+   ```bash
+   cd mobile
+   npm install
+   ```
 3. `android` と `ios` フォルダーが無い場合は次のコマンドで生成して配置します。
 
    ```bash
@@ -89,44 +94,15 @@ API は `http://localhost:3000` で利用可能になります。
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
 
 ### アプリの実行方法
-
-`mobile` ディレクトリで依存パッケージをインストールし、通常の React Native コマンドを実行してください。ネイティブプロジェクトのフォルダーが存在しない場合は、まず生成する必要があります。
-
-#### Linux / macOS
+初回セットアップ後は、次のコマンドでアプリを起動できます。`android` と `ios`
+フォルダーが存在しない場合は前節の手順 3 を参照して生成してください。
 
 ```bash
 cd mobile
-npm install
-# リポジトリには `android` と `ios` ディレクトリが含まれていません。
-# 存在しない場合は React Native CLI を使って生成してください。
-# このコマンドは npm からテンプレートをダウンロードするため、ネットワーク接続が必要です。
-# 動作確認時には React Native 0.72.7 を使用したため、バージョンを指定しています。
-npx react-native init AmanaTmp --template react-native@0.72.7
-mv AmanaTmp/android ./android
-mv AmanaTmp/ios ./ios
-rm -rf AmanaTmp
-# `init` コマンドを実行できない環境（オフライン等）の場合は、
-# コマンドが成功した別環境から生成済みの `android` と `ios` をコピーしてください。
 npm run android   # または npm run ios
 ```
 
-#### Windows (PowerShell)
-
-```powershell
-cd mobile
-npm install
-# リポジトリには `android` と `ios` ディレクトリが含まれていません。
-# 存在しない場合は React Native CLI を使って生成してください。
-npx react-native init AmanaTmp --template react-native@0.72.7
-Move-Item AmanaTmp/android ./android
-Move-Item AmanaTmp/ios ./ios
-Remove-Item -Recurse -Force AmanaTmp
-# `init` コマンドを実行できない環境（オフライン等）の場合は、
-# コマンドが成功した別環境から生成済みの `android` と `ios` をコピーしてください。
-npm run android   # または npm run ios
-```
-
-上記コマンドを実行すると、Metro Bundler が起動し、エミュレーターまたは実機でアプリが立ち上がります。
+コマンド実行後、Metro Bundler が起動し、エミュレーターまたは実機でアプリが立ち上がります。
 
 ### Android 追加設定
 
