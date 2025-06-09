@@ -43,9 +43,28 @@ let buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
 const repoBlock = `maven {\n        url 'https://api.mapbox.com/downloads/v2/releases/maven'\n        authentication { basic(BasicAuthentication) }\n        credentials {\n            username = 'mapbox'\n            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''\n        }\n    }`;
 
 if (!buildGradle.includes("api.mapbox.com")) {
-  buildGradle = buildGradle.replace(/allprojects\s*\{\n\s*repositories \{/, match => match + `\n        ${repoBlock.replace(/\n/g, '\n        ')}`);
-  fs.writeFileSync(buildGradlePath, buildGradle);
-  console.log('Inserted Mapbox repository block');
+  const patterns = [
+    /(allprojects\s*\{[\s\S]*?repositories\s*\{)/,
+    /(dependencyResolutionManagement\s*\{[\s\S]*?repositories\s*\{)/,
+  ];
+  const formatted = repoBlock
+    .split(/\n/)
+    .map((l) => '        ' + l)
+    .join('\n');
+  let inserted = false;
+  for (const pat of patterns) {
+    if (pat.test(buildGradle)) {
+      buildGradle = buildGradle.replace(pat, (m) => m + '\n' + formatted);
+      inserted = true;
+      break;
+    }
+  }
+  if (inserted) {
+    fs.writeFileSync(buildGradlePath, buildGradle);
+    console.log('Inserted Mapbox repository block');
+  } else {
+    console.warn('Could not find repository block in build.gradle');
+  }
 } else {
   console.log('Mapbox repository block already present');
 }
