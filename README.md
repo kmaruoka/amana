@@ -219,6 +219,50 @@ android {
 改めて `npm run android` を実行することで
 ビルドが通るようになります。
 
+### Kotlin コンパイルエラーが出る場合
+
+`react-native run-android` 実行時に `BaseReactPackage` や
+`ViewManagerWithGeneratedInterface` が解決できないといった Kotlin
+エラーが大量に表示される場合、React Native 0.72 と一部ライブラリの
+互換性が原因の可能性があります。以下を順に試してください。
+
+1. **依存パッケージを更新する**
+   - `react-native-screens` を最新版（例: 4.11.1）に更新するとエラーが解消
+     されることがあります。次のコマンドで更新できます。
+
+     ```bash
+     cd mobile
+     npm install react-native-screens@4.11.1
+     ```
+   - `@rnmapbox/maps` は React Native 0.72 との相性問題が報告されています。
+     解決しない場合は React Native を 0.71 系に下げることも検討します。
+2. **Android プロジェクトをクリーンする**
+   - 依存パッケージをインストールしたら次を実行してキャッシュを削除します。
+
+     ```bash
+     cd android
+     ./gradlew clean
+     ```
+
+     その後、再度アプリを起動します。
+
+     ```bash
+     npm run android
+     ```
+3. **新アーキテクチャ設定を確認する**
+   - `react-native.config.js` で新しいアーキテクチャを有効にしている場合、対応
+     していないライブラリがあるとビルドに失敗します。無効化するか、対応済みの
+     バージョンを利用してください。無効化するには設定ファイル内の
+
+     ```javascript
+     experimental: { newArchEnabled: false }
+     ```
+
+     を確認し、必要に応じて `false` に変更します。
+
+上記を試しても解決しない場合は、利用しているライブラリのバージョンや Android
+Studio のログを見直し、個別に問題を切り分けてください。
+
 ## Git運用ルール
 
 - ブランチ名にはASCII文字のみを使用してください。日本語などの2バイト文字は使わないでください。
