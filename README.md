@@ -23,14 +23,14 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ```powershell
 # 環境準備
-$env:reposdir='C:\factory\codex\kmaruoka'
+$env:GITHUB_REPOS_DIR=GitHubローカルリポジトリのルートディレクトリ
 
 # リポジトリ取得
-cd $env:reposdir
+cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
 
 # サーバーセットアップ
-cd $env:reposdir\amana
+cd $env:GITHUB_REPOS_DIR\amana
 npm install
 npm audit fix
 npx prisma migrate dev --name init
@@ -38,7 +38,7 @@ npm run seed
 npm run dev
 
 # モバイルセットアップ
-cd $env:reposdir\amana\mobile
+cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
 npm audit fix --force
 npx @react-native-community/cli init AmanaTmp --version 0.71.8
@@ -47,10 +47,10 @@ Move-Item AmanaTmp/ios ./ios -Force
 Remove-Item -Recurse -Force AmanaTmp
 
 # Mapbox トークンを .env に設定後、Gradle 周りを更新
-cd $env:reposdir\amana
+cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
 npm run update-android-sdk
-cd $env:reposdir\amana\mobile
+cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install react-native-screens@4.11.1
 cd android
 .\gradlew.bat clean
