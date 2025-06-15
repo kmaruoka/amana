@@ -49,15 +49,21 @@ Remove-Item -Recurse -Force AmanaTmp
 # Mapbox トークンを .env に設定後、Gradle 周りを更新
 cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
-npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
-cd android
+cd $env:GITHUB_REPOS_DIR\amana
+npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
+cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
 npx react-native doctor
 npm run android   # または npm run ios
 ```
+
+Kotlin バージョンの不一致で `:react-native-gradle-plugin:compileKotlin` が失敗する
+場合、`react-native-gradle-plugin` をインストールした後に `npm run update-android-sdk`
+を実行し、`mobile/android` ディレクトリで `./gradlew clean` を行ってから
+`npm run android` を試してください。
 
 ## セットアップ手順
 
