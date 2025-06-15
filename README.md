@@ -23,7 +23,7 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ```powershell
 git clone https://github.com/kmaruoka/amana.git
-cd amana
+cd $env:GITHUB_REPOS_DIR\amana
 cp .env.example .env   # MAPBOX_DOWNLOADS_TOKEN などを設定
 npm install
 npx prisma migrate dev --name init
@@ -34,7 +34,7 @@ npm run dev
 ### モバイル
 
 ```powershell
-cd mobile
+cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
 npx @react-native-community/cli init AmanaTmp --version 0.71.8
 Move-Item AmanaTmp/android ./android -Force
