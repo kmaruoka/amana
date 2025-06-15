@@ -249,15 +249,15 @@ Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新�
      npm run android
      ```
 3. **新アーキテクチャ設定を確認する**
-   - `react-native.config.js` で新しいアーキテクチャを有効にしている場合、対応
-     していないライブラリがあるとビルドに失敗します。無効化するか、対応済みの
-     バージョンを利用してください。無効化するには設定ファイル内の
+  - `react-native.config.js` で新しいアーキテクチャを有効にしている場合、対応
+    していないライブラリがあるとビルドに失敗します。このリポジトリではデフォルト
+    で無効 (`newArchEnabled: false`) にした設定ファイルを同梱していますが、
+    依存更新などで上書きされる可能性があります。内容を確認し、必要に応じて修正し
+    てください。
 
-     ```javascript
-     experimental: { newArchEnabled: false }
-     ```
-
-     を確認し、必要に応じて `false` に変更します。
+  ```javascript
+  experimental: { newArchEnabled: false }
+  ```
 
 上記を試しても解決しない場合は、利用しているライブラリのバージョンや Android
 Studio のログを見直し、個別に問題を切り分けてください。
