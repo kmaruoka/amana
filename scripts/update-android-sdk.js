@@ -5,8 +5,12 @@ const androidDir = path.resolve(__dirname, '../mobile/android');
 const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.properties');
 const buildGradle = path.join(androidDir, 'build.gradle');
 const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
-const pluginDir = path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin');
-const pluginBuild = path.join(pluginDir, 'build.gradle.kts');
+const pluginDirs = [
+  path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin'),
+  path.resolve(__dirname, '../mobile/node_modules/@react-native/gradle-plugin'),
+];
+let pluginDir = pluginDirs.find((d) => fs.existsSync(d));
+let pluginBuild = pluginDir ? path.join(pluginDir, 'build.gradle.kts') : null;
 const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox/maps/android/build.gradle');
 
 if (!fs.existsSync(androidDir)) {
@@ -50,13 +54,29 @@ if (fs.existsSync(appBuildGradle)) {
       `${m}\n    buildFeatures {\n        buildConfig true\n    }`
     );
   }
+  if (/compileOptions/.test(data)) {
+    data = data.replace(/sourceCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'sourceCompatibility JavaVersion.VERSION_17');
+    data = data.replace(/targetCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'targetCompatibility JavaVersion.VERSION_17');
+  } else {
+    data = data.replace(/android\s*\{/, (m) =>
+      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }`);
+  }
+  if (/kotlinOptions/.test(data)) {
+    data = data.replace(/jvmTarget\s*=\s*"?\d+"?/,
+      'jvmTarget = "17"');
+  } else {
+    data = data.replace(/android\s*\{/, (m) =>
+      `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
+  }
   fs.writeFileSync(appBuildGradle, data);
   console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
 }
 
 console.log('Android configuration updated. Run ./gradlew clean to apply changes.');
 
-if (!fs.existsSync(pluginDir)) {
+if (!pluginDir) {
   console.warn(
     'react-native-gradle-plugin not found. Run "npm install" in the mobile/ directory before executing gradle tasks.'
   );

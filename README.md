@@ -19,73 +19,44 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ## クイックスタート
 
-以下のコマンドを順に実行するだけで開発サーバーとエミュレータを起動できます。
-実績のある組み合わせ（2024 年 6 月確認）は `React Native 0.71.8` と
-`react-native-screens 4.11.1` です。
+### サーバー
 
 ```powershell
-# 環境準備
-$env:GITHUB_REPOS_DIR=GitHubローカルリポジトリのルートディレクトリ
-
-# リポジトリ取得
-cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
-
-# サーバーセットアップ
-cd $env:GITHUB_REPOS_DIR\amana
+cd amana
+cp .env.example .env   # MAPBOX_DOWNLOADS_TOKEN などを設定
 npm install
-npm audit fix
 npx prisma migrate dev --name init
 npm run seed
 npm run dev
+```
 
-# モバイルセットアップ
-cd $env:GITHUB_REPOS_DIR\amana\mobile
+### モバイル
+
+```powershell
+cd mobile
 npm install
-npm audit fix --force
 npx @react-native-community/cli init AmanaTmp --version 0.71.8
 Move-Item AmanaTmp/android ./android -Force
 Move-Item AmanaTmp/ios ./ios -Force
 Remove-Item -Recurse -Force AmanaTmp
-
-# Mapbox トークンを .env に設定後、Gradle 周りを更新
-cd $env:GITHUB_REPOS_DIR\amana
+cd ..
 npm run setup-gradle
-cd $env:GITHUB_REPOS_DIR\amana\mobile
-npm install react-native-screens@4.11.1
-npm install react-native-gradle-plugin
-cd $env:GITHUB_REPOS_DIR\amana
-npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
-# build.gradle に buildFeatures.buildConfig true を自動で追加します
-# このスクリプトは @rnmapbox/maps モジュールの build.gradle にも同じ設定を追記します
-cd $env:GITHUB_REPOS_DIR\amana\mobile\android
-# JDK17 を利用するよう JAVA_HOME を設定します
-# すでに JDK17 が設定済みであればこの行は不要です。
-# 以下はあくまで例なので自身の環境に合わせてパスを書き換えてください。
-# $env:JAVA_HOME = "C:\\Program Files\\Amazon Corretto\\jdk17"
+npm run update-android-sdk
+cd mobile\android
 .\gradlew.bat clean
-npx react-native doctor
+cd ..
 npm run android   # または npm run ios
 ```
 
-JDK 21 などより新しいバージョンを指定していると
-`Unsupported class file major version 65` のようなエラーが出る場合があります。
-本プロジェクトでは Android Gradle Plugin 8.1 系との互換性のため
-JDK17 を利用してください。
+### Android ビルドメモ
 
-それでも同じエラーが出る場合は、Gradle のキャッシュが古い JDK で作成されたまま残っている可能性があります。
-Windows 環境では `C:\Users\<ユーザー名>\.gradle\caches` を削除したうえで、
-`mobile/android` ディレクトリで `./gradlew.bat clean` を実行してから再度ビルドしてください。
+JDK 17 を利用しない場合や Gradle キャッシュが古いまま残っている場合、
+`Unsupported class file major version 65` などのエラーが発生することがあります。
+`npm run update-android-sdk` を実行して `compileOptions` と `kotlinOptions`
+が Java 17 を指していることを確認したうえで、`mobile/android` ディレクトリで
+`./gradlew.bat clean` を実行してからビルドしてください。
 
-Kotlin バージョンの不一致で `:react-native-gradle-plugin:compileKotlin` が失敗する
-場合、`react-native-gradle-plugin` をインストールした後に `npm run update-android-sdk`
-を実行し、`mobile/android` ディレクトリで `./gradlew clean` を行ってから
-`npm run android` を試してください。
-
-ビルド中に `defaultConfig contains custom BuildConfig fields, but the feature is disabled.`
-と表示された場合は、再度 `npm run update-android-sdk` を実行して
-`@rnmapbox/maps` の `android/build.gradle` に `buildFeatures { buildConfig true }`
-が追加されていることを確認してください。
 
 ## セットアップ手順
 
@@ -171,8 +142,9 @@ Remove-Item -Recurse -Force AmanaTmp
    `react-native-gradle-plugin` の設定も自動で書き換えられます。
    変更後は Android プロジェクト (`mobile/android`) のルートで
    `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
-   `node_modules` が無い場合は `cd mobile` して `npm install` を行い、
-   `react-native-gradle-plugin` をインストールしてから再度実行します。
+   `node_modules` が無い場合は `cd mobile` して `npm install` を行います。
+   React Native 0.71 以降では `react-native-gradle-plugin` が自動で
+   インストールされるため、個別に追加する必要はありません。
    詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
@@ -302,12 +274,12 @@ Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新�
 互換性が原因の可能性があります。以下を順に試してください。
 
 1. **依存パッケージを更新する**
-   - `react-native-screens` を最新版（例: 4.11.1）に更新するとエラーが解消
-     されることがあります。次のコマンドで更新できます。
+   - `react-native-screens` はデフォルトで `4.11.1` がインストールされますが、
+     さらに新しいバージョンが出ている場合は次のように更新できます。
 
      ```bash
      cd mobile
-     npm install react-native-screens@4.11.1
+     npm install react-native-screens@latest
      ```
    - `@rnmapbox/maps` は React Native 0.72 との相性問題が報告されています。
 2. **Android プロジェクトをクリーンする**
