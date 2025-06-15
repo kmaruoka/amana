@@ -53,6 +53,14 @@ npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
 cd $env:GITHUB_REPOS_DIR\amana
 npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
+# ※このコマンドで Android SDK 周りを更新しないと
+#   `compileSdkVersion is not specified` や
+#   `Could not find method kotlinOptions()`
+#   といったエラーが発生します。
+#   実行時に Java 17 以上がインストールされているかを確認し、
+#   足りない場合はエラーを表示します。
+#   `JAVA_HOME` が設定されている場合は
+#   `gradle.properties` に `org.gradle.java.home` を追記します。
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
 npx react-native doctor
@@ -269,6 +277,10 @@ $env:GRADLE_USER_HOME = "D:\\gradle-cache"
 本リポジトリでは `npm run update-android-sdk` を用意しており、実行すると
 `compileSdkVersion` と `targetSdkVersion` を **34** に変更するとともに、
 Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新します。
+また、Java 17 がインストールされているかをチェックし、
+不足している場合はエラーを表示します。
+`JAVA_HOME` が指定されている場合は `gradle.properties` の
+`org.gradle.java.home` を自動で設定します。
 
 スクリプト実行後は Android プロジェクト (`mobile/android`) のルートで
 `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、

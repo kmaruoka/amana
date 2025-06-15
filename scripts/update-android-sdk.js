@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const androidDir = path.resolve(__dirname, '../mobile/android');
 const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.properties');
@@ -12,10 +13,43 @@ const pluginDirs = [
 let pluginDir = pluginDirs.find((d) => fs.existsSync(d));
 let pluginBuild = pluginDir ? path.join(pluginDir, 'build.gradle.kts') : null;
 const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox/maps/android/build.gradle');
+const gradleProperties = path.join(androidDir, 'gradle.properties');
+
+// Check Java version
+let javaVersionOut;
+try {
+  javaVersionOut = execSync('java -version 2>&1', { encoding: 'utf8' });
+} catch (e) {
+  console.error('Java not found. Please install JDK 17 and set JAVA_HOME.');
+  process.exit(1);
+}
+const match = javaVersionOut.match(/version "(\d+)/);
+if (!match || parseInt(match[1], 10) < 17) {
+  console.error('JDK 17 or newer is required. Current java -version output:\n' + javaVersionOut);
+  process.exit(1);
+}
 
 if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
   process.exit(1);
+}
+
+// Record JAVA_HOME for Gradle if possible
+if (fs.existsSync(gradleProperties)) {
+  const javaHome = process.env.JAVA_HOME;
+  if (javaHome) {
+    let props = fs.readFileSync(gradleProperties, 'utf8');
+    const normalized = javaHome.replace(/\\/g, '/');
+    if (/^org\.gradle\.java\.home/m.test(props)) {
+      props = props.replace(/^org\.gradle\.java\.home=.*/m, `org.gradle.java.home=${normalized}`);
+    } else {
+      props += `\norg.gradle.java.home=${normalized}\n`;
+    }
+    fs.writeFileSync(gradleProperties, props);
+    console.log('Updated org.gradle.java.home in gradle.properties');
+  } else {
+    console.warn('JAVA_HOME is not set. Set it to your JDK 17 path for consistent builds.');
+  }
 }
 
 // Update gradle wrapper
