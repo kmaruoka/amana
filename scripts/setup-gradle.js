@@ -22,6 +22,7 @@ if (!token) {
 
 const gradlePropsPath = path.resolve(__dirname, '../mobile/android/gradle.properties');
 const buildGradlePath = path.resolve(__dirname, '../mobile/android/build.gradle');
+const settingsGradlePath = path.resolve(__dirname, '../mobile/android/settings.gradle');
 
 if (!fs.existsSync(gradlePropsPath) || !fs.existsSync(buildGradlePath)) {
   console.error('Android project not found. Please generate android/ folder first.');
@@ -67,5 +68,26 @@ if (!buildGradle.includes("api.mapbox.com")) {
   }
 } else {
   console.log('Mapbox repository block already present');
+}
+
+// Also update settings.gradle for projects using dependencyResolutionManagement
+if (fs.existsSync(settingsGradlePath)) {
+  let settingsGradle = fs.readFileSync(settingsGradlePath, 'utf8');
+  if (!settingsGradle.includes('api.mapbox.com')) {
+    const pattern = /(dependencyResolutionManagement\s*\{[\s\S]*?repositories\s*\{)/;
+    const formatted = repoBlock
+      .split(/\n/)
+      .map((l) => '        ' + l)
+      .join('\n');
+    if (pattern.test(settingsGradle)) {
+      settingsGradle = settingsGradle.replace(pattern, (m) => m + '\n' + formatted);
+      fs.writeFileSync(settingsGradlePath, settingsGradle);
+      console.log('Inserted Mapbox repository block into settings.gradle');
+    } else {
+      console.warn('Could not find repository block in settings.gradle');
+    }
+  } else {
+    console.log('Mapbox repository block already present in settings.gradle');
+  }
 }
 
