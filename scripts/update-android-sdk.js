@@ -4,7 +4,7 @@ const path = require('path');
 const androidDir = path.resolve(__dirname, '../mobile/android');
 const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.properties');
 const buildGradle = path.join(androidDir, 'build.gradle');
-const projectBuildGradle = path.join(androidDir, 'app', 'build.gradle');
+const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
 
 if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
@@ -23,19 +23,21 @@ if (fs.existsSync(wrapperProp)) {
 // Update Android Gradle plugin
 if (fs.existsSync(buildGradle)) {
   let data = fs.readFileSync(buildGradle, 'utf8');
-  data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/,
-    'com.android.tools.build:gradle:8.1.2');
+  data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.1.2');
+  data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
+  data = data.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 34');
+  data = data.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 34');
   fs.writeFileSync(buildGradle, data);
-  console.log('Updated Android Gradle plugin');
+  console.log('Updated Android Gradle plugin and SDK versions');
 }
 
-// Update compileSdkVersion and targetSdkVersion
-if (fs.existsSync(projectBuildGradle)) {
-  let data = fs.readFileSync(projectBuildGradle, 'utf8');
+// Update compileSdkVersion and targetSdkVersion in app/build.gradle for older templates
+if (fs.existsSync(appBuildGradle)) {
+  let data = fs.readFileSync(appBuildGradle, 'utf8');
   data = data.replace(/compileSdkVersion\s*=?\s*\d+/g, 'compileSdkVersion = 34');
   data = data.replace(/targetSdkVersion\s*=?\s*\d+/g, 'targetSdkVersion = 34');
-  fs.writeFileSync(projectBuildGradle, data);
-  console.log('Updated compileSdkVersion and targetSdkVersion to 34');
+  fs.writeFileSync(appBuildGradle, data);
+  console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
 }
 
 console.log('Android configuration updated. Run ./gradlew clean to apply changes.');
