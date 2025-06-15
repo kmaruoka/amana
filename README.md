@@ -234,7 +234,6 @@ Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新�
      npm install react-native-screens@4.11.1
      ```
    - `@rnmapbox/maps` は React Native 0.72 との相性問題が報告されています。
-     解決しない場合は React Native を 0.71 系に下げることも検討します。
 2. **Android プロジェクトをクリーンする**
    - 依存パッケージをインストールしたら次を実行してキャッシュを削除します。
 
@@ -258,6 +257,20 @@ Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新�
   ```javascript
   experimental: { newArchEnabled: false }
   ```
+
+4. **React Native を 0.71 系にダウングレードする**
+  - 上記の対処をすべて試しても改善しない場合、`package.json` の
+    `react-native` のバージョンを `0.71.x` に変更して `npm install` を
+    実行します。
+  - 既存の `android` と `ios` フォルダーを再生成する場合は、次のように
+    テンプレートを指定して `react-native` プロジェクトを作り直します。
+
+    ```powershell
+    npx @react-native-community/cli init AmanaTmp --version 0.71.8
+    Move-Item AmanaTmp/android ./android -Force
+    Move-Item AmanaTmp/ios ./ios -Force
+    Remove-Item -Recurse -Force AmanaTmp
+    ```
 
 上記を試しても解決しない場合は、利用しているライブラリのバージョンや Android
 Studio のログを見直し、個別に問題を切り分けてください。
