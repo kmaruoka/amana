@@ -63,6 +63,8 @@ npm run update-android-sdk  # Kotlin バージョンも自動で調整されま�
 #   `gradle.properties` に `org.gradle.java.home` を追記します。
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
+# もし上記で再び `compileSdkVersion is not specified` などと表示された場合は
+# もう一度 `npm run update-android-sdk` を実行してから再試行してください。
 npx react-native doctor
 npm run android   # または npm run ios
 ```
