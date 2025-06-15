@@ -50,6 +50,22 @@ if (fs.existsSync(appBuildGradle)) {
       `${m}\n    buildFeatures {\n        buildConfig true\n    }`
     );
   }
+  if (/compileOptions/.test(data)) {
+    data = data.replace(/sourceCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'sourceCompatibility JavaVersion.VERSION_17');
+    data = data.replace(/targetCompatibility\s+JavaVersion\.VERSION_\d+/,
+      'targetCompatibility JavaVersion.VERSION_17');
+  } else {
+    data = data.replace(/android\s*\{/, (m) =>
+      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }`);
+  }
+  if (/kotlinOptions/.test(data)) {
+    data = data.replace(/jvmTarget\s*=\s*"?\d+"?/,
+      'jvmTarget = "17"');
+  } else {
+    data = data.replace(/android\s*\{/, (m) =>
+      `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
+  }
   fs.writeFileSync(appBuildGradle, data);
   console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
 }
