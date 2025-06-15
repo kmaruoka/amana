@@ -49,7 +49,7 @@ Remove-Item -Recurse -Force AmanaTmp
 # Mapbox トークンを .env に設定後、Gradle 周りを更新
 cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
-npm run update-android-sdk
+npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
@@ -139,6 +139,8 @@ Remove-Item -Recurse -Force AmanaTmp
    `compileSdkVersion` と `targetSdkVersion` が **34** に更新され、
    Gradle 8.1.1 および Android Gradle Plugin 8.1.2 を使用するよう
    `gradle-wrapper.properties` や `build.gradle` が書き換えられます。
+   また、Kotlin バージョンの不一致によるビルドエラーを防ぐため、
+   `react-native-gradle-plugin` の設定も自動で書き換えられます。
    変更後は Android プロジェクト (`mobile/android`) のルートで
    `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
    `node_modules` が無い場合は `cd mobile` して `npm install` を行い、

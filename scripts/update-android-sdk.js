@@ -6,6 +6,7 @@ const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.propert
 const buildGradle = path.join(androidDir, 'build.gradle');
 const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
 const pluginDir = path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin');
+const pluginBuild = path.join(pluginDir, 'build.gradle.kts');
 
 if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
@@ -47,5 +48,12 @@ if (!fs.existsSync(pluginDir)) {
   console.warn(
     'react-native-gradle-plugin not found. Run "npm install" in the mobile/ directory before executing gradle tasks.'
   );
+} else if (fs.existsSync(pluginBuild)) {
+  let data = fs.readFileSync(pluginBuild, 'utf8');
+  if (/kotlin\("jvm"\) version "1\.6/.test(data)) {
+    data = data.replace(/kotlin\("jvm"\) version "[\d.]+"/, 'kotlin("jvm") version "1.8.10"');
+    fs.writeFileSync(pluginBuild, data);
+    console.log('Patched react-native-gradle-plugin Kotlin version to 1.8.10');
+  }
 }
 
