@@ -48,7 +48,7 @@ if (fs.existsSync(gradleProperties)) {
     fs.writeFileSync(gradleProperties, props);
     console.log('Updated org.gradle.java.home in gradle.properties');
   } else {
-    console.warn('JAVA_HOME is not set. Set it to your JDK 17 path for consistent builds.');
+    console.warn('JAVA_HOME が設定されていません。JDK 17 のパスを指定してください。');
   }
 }
 
@@ -128,7 +128,7 @@ console.log('Android configuration updated. Run ./gradlew clean to apply changes
 
 if (!pluginDir) {
   console.warn(
-    'react-native-gradle-plugin not found. Run "npm install" in the mobile/ directory before executing gradle tasks.'
+    'react-native-gradle-plugin が見つかりません。Gradle 実行前に mobile ディレクトリで `npm install` を実行してください。'
   );
 } else if (fs.existsSync(pluginBuild)) {
   let data = fs.readFileSync(pluginBuild, 'utf8');
@@ -154,6 +154,21 @@ if (fs.existsSync(rnmapboxGradle)) {
       fs.writeFileSync(rnmapboxGradle, data);
       console.log('Inserted buildFeatures block in rnmapbox_maps');
     }
+  }
+}
+
+// Final sanity check
+if (fs.existsSync(appBuildGradle)) {
+  const finalData = fs.readFileSync(appBuildGradle, 'utf8');
+  if (!/compileSdkVersion\s*=?\s*34/.test(finalData)) {
+    console.warn(
+      'compileSdkVersion を自動で更新できませんでした。`mobile/android/app/build.gradle` を手動で編集してください。'
+    );
+  }
+  if (!/kotlinOptions/.test(finalData)) {
+    console.warn(
+      'kotlinOptions ブロックが見つかりません。kotlin-android プラグインが適用されているか確認してください。'
+    );
   }
 }
 
