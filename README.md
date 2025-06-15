@@ -54,7 +54,10 @@ npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
 cd $env:GITHUB_REPOS_DIR\amana
 npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
+# build.gradle に buildFeatures.buildConfig true を自動で追加します
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
+# JDK17 を利用するよう JAVA_HOME を設定してください
+$env:JAVA_HOME = "C:\\path\\to\\jdk17"
 .\gradlew.bat clean
 npx react-native doctor
 npm run android   # または npm run ios

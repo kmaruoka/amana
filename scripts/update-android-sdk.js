@@ -38,6 +38,17 @@ if (fs.existsSync(appBuildGradle)) {
   let data = fs.readFileSync(appBuildGradle, 'utf8');
   data = data.replace(/compileSdkVersion\s*=?\s*\d+/g, 'compileSdkVersion = 34');
   data = data.replace(/targetSdkVersion\s*=?\s*\d+/g, 'targetSdkVersion = 34');
+  if (/buildFeatures/.test(data)) {
+    data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
+      return /buildConfig\s+true/.test(m)
+        ? m
+        : m.replace(/\}/, '    buildConfig true\n    }');
+    });
+  } else {
+    data = data.replace(/android\s*\{/, (m) =>
+      `${m}\n    buildFeatures {\n        buildConfig true\n    }`
+    );
+  }
   fs.writeFileSync(appBuildGradle, data);
   console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
 }
