@@ -22,12 +22,10 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 ### サーバー
 
 ```powershell
-$env:GITHUB_REPOS_DIR=GitHubローカルリポジトリのルートディレクトリ
-cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
-cd amana
+cd $env:GITHUB_REPOS_DIR\amana
+cp .env.example .env   # MAPBOX_DOWNLOADS_TOKEN などを設定
 npm install
-npm audit fix
 npx prisma migrate dev --name init
 npm run seed
 npm run dev
@@ -46,9 +44,8 @@ cd ..
 npm run setup-gradle
 npm run update-android-sdk
 cd mobile\android
-\$env:JAVA_HOME = "C:\\Program Files\\Amazon Corretto\\jdk17"
 .\gradlew.bat clean
-npx react-native doctor
+cd ..
 npm run android   # または npm run ios
 ```
 
@@ -145,8 +142,9 @@ Remove-Item -Recurse -Force AmanaTmp
    `react-native-gradle-plugin` の設定も自動で書き換えられます。
    変更後は Android プロジェクト (`mobile/android`) のルートで
    `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
-   `node_modules` が無い場合は `cd mobile` して `npm install` を行い、
-   `react-native-gradle-plugin` をインストールしてから再度実行します。
+   `node_modules` が無い場合は `cd mobile` して `npm install` を行います。
+   React Native 0.71 以降では `react-native-gradle-plugin` が自動で
+   インストールされるため、個別に追加する必要はありません。
    詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
@@ -276,12 +274,12 @@ Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新�
 互換性が原因の可能性があります。以下を順に試してください。
 
 1. **依存パッケージを更新する**
-   - `react-native-screens` を最新版（例: 4.11.1）に更新するとエラーが解消
-     されることがあります。次のコマンドで更新できます。
+   - `react-native-screens` はデフォルトで `4.11.1` がインストールされますが、
+     さらに新しいバージョンが出ている場合は次のように更新できます。
 
      ```bash
      cd mobile
-     npm install react-native-screens@4.11.1
+     npm install react-native-screens@latest
      ```
    - `@rnmapbox/maps` は React Native 0.72 との相性問題が報告されています。
 2. **Android プロジェクトをクリーンする**
