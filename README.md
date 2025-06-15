@@ -15,6 +15,49 @@
 DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 ```
 
+## クイックスタート
+
+以下のコマンドを順に実行するだけで開発サーバーとエミュレータを起動できます。
+実績のある組み合わせ（2024 年 6 月確認）は `React Native 0.71.8` と
+`react-native-screens 4.11.1` です。
+
+```powershell
+# 環境準備
+$env:reposdir='C:\factory\codex\kmaruoka'
+
+# リポジトリ取得
+cd $env:reposdir
+git clone https://github.com/kmaruoka/amana.git
+
+# サーバーセットアップ
+cd $env:reposdir\amana
+npm install
+npm audit fix
+npx prisma migrate dev --name init
+npm run seed
+npm run dev
+
+# モバイルセットアップ
+cd $env:reposdir\amana\mobile
+npm install
+npm audit fix --force
+npx @react-native-community/cli init AmanaTmp --version 0.71.8
+Move-Item AmanaTmp/android ./android -Force
+Move-Item AmanaTmp/ios ./ios -Force
+Remove-Item -Recurse -Force AmanaTmp
+
+# Mapbox トークンを .env に設定後、Gradle 周りを更新
+cd $env:reposdir\amana
+npm run setup-gradle
+npm run update-android-sdk
+cd $env:reposdir\amana\mobile
+npm install react-native-screens@4.11.1
+cd android
+.\gradlew.bat clean
+npx react-native doctor
+npm run android   # または npm run ios
+```
+
 ## セットアップ手順
 
 1. リポジトリに同梱されている `.env` を必要に応じて編集します。基本的な値はあらかじめ設定されているため、API キーなどの機密情報のみ書き換えてください。
