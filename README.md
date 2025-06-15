@@ -90,11 +90,15 @@ Remove-Item -Recurse -Force AmanaTmp
    設定を自動で更新します。`.env` に `MAPBOX_DOWNLOADS_TOKEN` を記入しておくと、
    `mobile/android/gradle.properties` と `build.gradle` が書き換えられます。
 
-6. ビルドエラーが発生する場合は `mobile/android/build.gradle` を開き、
-   `compileSdkVersion` と `targetSdkVersion` を **34** に更新します。
+6. Android SDK と Gradle 周りの設定を自動調整するために、続けて
+   `npm run update-android-sdk` を実行します。これにより
+   `compileSdkVersion` と `targetSdkVersion` が **34** に更新され、
+   Gradle 8.1.1 および Android Gradle Plugin 8.1.2 を使用するよう
+   `gradle-wrapper.properties` や `build.gradle` が書き換えられます。
    変更後は Android プロジェクト (`mobile/android`) のルートで
    `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
    詳細は後述の「Android API レベルの更新」節も参照します。
+
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
 
 ### アプリの実行方法
@@ -201,23 +205,16 @@ $env:GRADLE_USER_HOME = "D:\\gradle-cache"
 これは依存ライブラリが **Android API 34** 以上でのビルドを要求しているためです。
 
 `npx react-native init` で生成した直後のプロジェクトでは `compileSdkVersion`
-および `targetSdkVersion` が `33` になっているので、次のように
-`mobile/android/build.gradle` の設定を更新してください。
+および `targetSdkVersion` が `33` になっているため、そのままでは依存ライブラリが
+要求する API レベルと一致せずビルドに失敗します。
 
-```gradle
-android {
-    compileSdkVersion = 34
+本リポジトリでは `npm run update-android-sdk` を用意しており、実行すると
+`compileSdkVersion` と `targetSdkVersion` を **34** に変更するとともに、
+Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新します。
 
-    defaultConfig {
-        targetSdkVersion = 34
-        // その他の設定
-    }
-}
-```
-
-変更後に Android プロジェクト (`mobile/android`) のルートで `./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
-改めて `npm run android` を実行することで
-ビルドが通るようになります。
+スクリプト実行後は Android プロジェクト (`mobile/android`) のルートで
+`./gradlew clean` (Windows では `\.\gradlew.bat clean`) を実行し、
+改めて `npm run android` を実行してください。
 
 ### Kotlin コンパイルエラーが出る場合
 
