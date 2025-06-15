@@ -97,6 +97,8 @@ Remove-Item -Recurse -Force AmanaTmp
    `gradle-wrapper.properties` や `build.gradle` が書き換えられます。
    変更後は Android プロジェクト (`mobile/android`) のルートで
    `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
+   `node_modules` が無い場合は `cd mobile` して `npm install` を行い、
+   `react-native-gradle-plugin` をインストールしてから再度実行します。
    詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
