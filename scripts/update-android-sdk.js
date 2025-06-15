@@ -7,6 +7,7 @@ const buildGradle = path.join(androidDir, 'build.gradle');
 const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
 const pluginDir = path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin');
 const pluginBuild = path.join(pluginDir, 'build.gradle.kts');
+const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox/maps/android/build.gradle');
 
 if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
@@ -65,6 +66,24 @@ if (!fs.existsSync(pluginDir)) {
     data = data.replace(/kotlin\("jvm"\) version "[\d.]+"/, 'kotlin("jvm") version "1.8.10"');
     fs.writeFileSync(pluginBuild, data);
     console.log('Patched react-native-gradle-plugin Kotlin version to 1.8.10');
+  }
+}
+
+// Enable BuildConfig generation for @rnmapbox/maps
+if (fs.existsSync(rnmapboxGradle)) {
+  let data = fs.readFileSync(rnmapboxGradle, 'utf8');
+  if (/android\s*\{/.test(data)) {
+    if (/buildFeatures/.test(data)) {
+      if (!/buildConfig\s+true/.test(data)) {
+        data = data.replace(/buildFeatures\s*\{/, '$&\n        buildConfig true');
+        fs.writeFileSync(rnmapboxGradle, data);
+        console.log('Enabled buildConfig in rnmapbox_maps');
+      }
+    } else {
+      data = data.replace(/android\s*\{/, (m) => `${m}\n    buildFeatures {\n        buildConfig true\n    }`);
+      fs.writeFileSync(rnmapboxGradle, data);
+      console.log('Inserted buildFeatures block in rnmapbox_maps');
+    }
   }
 }
 

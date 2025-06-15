@@ -55,18 +55,35 @@ npm install react-native-gradle-plugin
 cd $env:GITHUB_REPOS_DIR\amana
 npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
 # build.gradle に buildFeatures.buildConfig true を自動で追加します
+# このスクリプトは @rnmapbox/maps モジュールの build.gradle にも同じ設定を追記します
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
-# JDK17 を利用するよう JAVA_HOME を設定してください
-$env:JAVA_HOME = "C:\\path\\to\\jdk17"
+# JDK17 を利用するよう JAVA_HOME を設定します
+# すでに JDK17 が設定済みであればこの行は不要です。
+# 以下はあくまで例なので自身の環境に合わせてパスを書き換えてください。
+# $env:JAVA_HOME = "C:\\Program Files\\Amazon Corretto\\jdk17"
 .\gradlew.bat clean
 npx react-native doctor
 npm run android   # または npm run ios
 ```
 
+JDK 21 などより新しいバージョンを指定していると
+`Unsupported class file major version 65` のようなエラーが出る場合があります。
+本プロジェクトでは Android Gradle Plugin 8.1 系との互換性のため
+JDK17 を利用してください。
+
+それでも同じエラーが出る場合は、Gradle のキャッシュが古い JDK で作成されたまま残っている可能性があります。
+Windows 環境では `C:\Users\<ユーザー名>\.gradle\caches` を削除したうえで、
+`mobile/android` ディレクトリで `./gradlew.bat clean` を実行してから再度ビルドしてください。
+
 Kotlin バージョンの不一致で `:react-native-gradle-plugin:compileKotlin` が失敗する
 場合、`react-native-gradle-plugin` をインストールした後に `npm run update-android-sdk`
 を実行し、`mobile/android` ディレクトリで `./gradlew clean` を行ってから
 `npm run android` を試してください。
+
+ビルド中に `defaultConfig contains custom BuildConfig fields, but the feature is disabled.`
+と表示された場合は、再度 `npm run update-android-sdk` を実行して
+`@rnmapbox/maps` の `android/build.gradle` に `buildFeatures { buildConfig true }`
+が追加されていることを確認してください。
 
 ## セットアップ手順
 
