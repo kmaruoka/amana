@@ -5,6 +5,7 @@ const androidDir = path.resolve(__dirname, '../mobile/android');
 const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.properties');
 const buildGradle = path.join(androidDir, 'build.gradle');
 const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
+const pluginDir = path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin');
 
 if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
@@ -41,4 +42,10 @@ if (fs.existsSync(appBuildGradle)) {
 }
 
 console.log('Android configuration updated. Run ./gradlew clean to apply changes.');
+
+if (!fs.existsSync(pluginDir)) {
+  console.warn(
+    'react-native-gradle-plugin not found. Run "npm install" in the mobile/ directory before executing gradle tasks.'
+  );
+}
 
