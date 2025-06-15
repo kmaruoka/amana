@@ -66,8 +66,16 @@ if (fs.existsSync(buildGradle)) {
   let data = fs.readFileSync(buildGradle, 'utf8');
   data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.1.2');
   data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
-  data = data.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 34');
-  data = data.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 34');
+  if (/compileSdkVersion/.test(data)) {
+    data = data.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 34');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
+  }
+  if (/targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 34');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
+  }
   fs.writeFileSync(buildGradle, data);
   console.log('Updated Android Gradle plugin and SDK versions');
 }
@@ -75,8 +83,16 @@ if (fs.existsSync(buildGradle)) {
 // Update compileSdkVersion and targetSdkVersion in app/build.gradle for older templates
 if (fs.existsSync(appBuildGradle)) {
   let data = fs.readFileSync(appBuildGradle, 'utf8');
-  data = data.replace(/compileSdkVersion\s*=?\s*\d+/g, 'compileSdkVersion = 34');
-  data = data.replace(/targetSdkVersion\s*=?\s*\d+/g, 'targetSdkVersion = 34');
+  if (/compileSdkVersion/.test(data)) {
+    data = data.replace(/compileSdkVersion\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'compileSdkVersion = 34');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
+  }
+  if (/targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'targetSdkVersion = 34');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
+  }
   if (/buildFeatures/.test(data)) {
     data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
       return /buildConfig\s+true/.test(m)
