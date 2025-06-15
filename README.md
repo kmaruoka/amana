@@ -65,6 +65,9 @@ cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
 # もし上記で再び `compileSdkVersion is not specified` などと表示された場合は
 # もう一度 `npm run update-android-sdk` を実行してから再試行してください。
+# モバイル側の依存が不足しているとスクリプトが正しく動作しないことがあります。
+# その場合は `cd mobile` して `npm install` を実行したのち、
+# 再度 `npm run update-android-sdk` を実行してください。
 npx react-native doctor
 npm run android   # または npm run ios
 ```
