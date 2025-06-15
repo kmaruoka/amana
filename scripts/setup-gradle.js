@@ -60,12 +60,16 @@ if (!buildGradle.includes("api.mapbox.com")) {
       break;
     }
   }
-  if (inserted) {
-    fs.writeFileSync(buildGradlePath, buildGradle);
-    console.log('Inserted Mapbox repository block');
-  } else {
-    console.warn('Could not find repository block in build.gradle');
+  if (!inserted) {
+    // Fall back to appending a new allprojects block for older templates
+    buildGradle +=
+      '\nallprojects {\n    repositories {\n' +
+      formatted +
+      '\n    }\n}\n';
+    console.log('Appended new allprojects block with Mapbox repository');
   }
+  fs.writeFileSync(buildGradlePath, buildGradle);
+  console.log('Inserted Mapbox repository block');
 } else {
   console.log('Mapbox repository block already present');
 }
