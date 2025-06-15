@@ -100,6 +100,8 @@ Remove-Item -Recurse -Force AmanaTmp
    詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
+   `npm run android` は内部で `npm run update-android-sdk` を呼び出し、
+   `compileSdkVersion` と `targetSdkVersion` を自動で最新に更新します。
 
 ### アプリの実行方法
 初回セットアップ後は、次のコマンドでアプリを起動できます。`android` と `ios`
