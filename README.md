@@ -19,43 +19,51 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 
 ## クイックスタート
 
-### サーバー
-
 ```powershell
+# 環境準備
+$env:GITHUB_REPOS_DIR=GitHubローカルリポジトリのルートディレクトリ
+$env:JAVA_HOME=JDK17のインストールフォルダ
+
+# リポジトリ取得
+cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
+
+# サーバーセットアップ
 cd $env:GITHUB_REPOS_DIR\amana
-cp .env.example .env   # MAPBOX_DOWNLOADS_TOKEN などを設定
 npm install
+npm audit fix
 npx prisma migrate dev --name init
 npm run seed
 npm run dev
-```
 
-### モバイル
-
-```powershell
+# モバイルセットアップ
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
+npm audit fix --force
 npx @react-native-community/cli init AmanaTmp --version 0.71.8
 Move-Item AmanaTmp/android ./android -Force
 Move-Item AmanaTmp/ios ./ios -Force
 Remove-Item -Recurse -Force AmanaTmp
-cd ..
+
+# Mapbox トークンを .env に設定後、Gradle 周りを更新
+cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
-npm run update-android-sdk
-cd mobile\android
+cd $env:GITHUB_REPOS_DIR\amana\mobile
+npm install react-native-screens@4.11.1
+npm install react-native-gradle-plugin
+cd $env:GITHUB_REPOS_DIR\amana
+npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
+cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
-cd ..
+npx react-native doctor
 npm run android   # または npm run ios
 ```
 
 ### Android ビルドメモ
 
-JDK 17 を利用しない場合や Gradle キャッシュが古いまま残っている場合、
-`Unsupported class file major version 65` などのエラーが発生することがあります。
-`npm run update-android-sdk` を実行して `compileOptions` と `kotlinOptions`
-が Java 17 を指していることを確認したうえで、`mobile/android` ディレクトリで
-`./gradlew.bat clean` を実行してからビルドしてください。
+- JDK 17 を利用してください。
+- ビルドに失敗したら `npm run update-android-sdk` と
+  `./gradlew.bat clean` を試してください。
 
 
 ## セットアップ手順
