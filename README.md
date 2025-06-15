@@ -52,6 +52,7 @@ npm run setup-gradle
 npm run update-android-sdk
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install react-native-screens@4.11.1
+npm install react-native-gradle-plugin
 cd android
 .\gradlew.bat clean
 npx react-native doctor
