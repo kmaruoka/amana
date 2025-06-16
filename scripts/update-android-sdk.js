@@ -20,12 +20,12 @@ let javaVersionOut;
 try {
   javaVersionOut = execSync('java -version 2>&1', { encoding: 'utf8' });
 } catch (e) {
-  console.error('Java not found. Please install JDK 17 and set JAVA_HOME.');
+  console.error('Java not found. Please install JDK 11 and set JAVA_HOME.');
   process.exit(1);
 }
 const match = javaVersionOut.match(/version "(\d+)/);
-if (!match || parseInt(match[1], 10) < 17) {
-  console.error('JDK 17 or newer is required. Current java -version output:\n' + javaVersionOut);
+if (!match || parseInt(match[1], 10) < 11) {
+  console.error('JDK 11 or newer is required. Current java -version output:\n' + javaVersionOut);
   process.exit(1);
 }
 
@@ -48,7 +48,7 @@ if (fs.existsSync(gradleProperties)) {
     fs.writeFileSync(gradleProperties, props);
     console.log('Updated org.gradle.java.home in gradle.properties');
   } else {
-    console.warn('JAVA_HOME が設定されていません。JDK 17 のパスを指定してください。');
+    console.warn('JAVA_HOME が設定されていません。JDK 11 のパスを指定してください。');
   }
 }
 
@@ -106,19 +106,19 @@ if (fs.existsSync(appBuildGradle)) {
   }
   if (/compileOptions/.test(data)) {
     data = data.replace(/sourceCompatibility\s+JavaVersion\.VERSION_\d+/,
-      'sourceCompatibility JavaVersion.VERSION_17');
+      'sourceCompatibility JavaVersion.VERSION_11');
     data = data.replace(/targetCompatibility\s+JavaVersion\.VERSION_\d+/,
-      'targetCompatibility JavaVersion.VERSION_17');
+      'targetCompatibility JavaVersion.VERSION_11');
   } else {
     data = data.replace(/android\s*\{/, (m) =>
-      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }`);
+      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_11\n        targetCompatibility JavaVersion.VERSION_11\n    }`);
   }
   if (/kotlinOptions/.test(data)) {
     data = data.replace(/jvmTarget\s*=\s*"?\d+"?/,
-      'jvmTarget = "17"');
+      'jvmTarget = "11"');
   } else {
     data = data.replace(/android\s*\{/, (m) =>
-      `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
+      `${m}\n    kotlinOptions {\n        jvmTarget = "11"\n    }`);
   }
   fs.writeFileSync(appBuildGradle, data);
   console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
