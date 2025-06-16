@@ -8,6 +8,11 @@ APIサーバーはコアとなるデータベーススキーマを定義し、�
 
 - Node.js 18 以上
 - PostgreSQL 15 （PostGIS 拡張付き）
+- JDK 11
+- Android NDK 23.1
+
+推奨バージョン構成: React Native 0.71.8 + @rnmapbox/maps 10.1.39 + Prisma v5
+現行の React Native 0.72.x は安定版リリース前で不具合が報告されています。Mapbox を利用する場合は 0.71 系を推奨します。
 
 サーバーは CommonJS モジュールとして構成されており、`npm run dev` を実行すると `ts-node-dev` を介して起動します。
 
@@ -22,7 +27,7 @@ DATABASE_URL="postgresql://amana_user:amana_pass@127.0.0.1:15432/amana"
 ```powershell
 # 環境準備
 $env:GITHUB_REPOS_DIR=GitHubローカルリポジトリのルートディレクトリ
-$env:JAVA_HOME=JDK17のインストールフォルダ
+$env:JAVA_HOME=JDK11のインストールフォルダ
 
 # リポジトリ取得
 cd $env:GITHUB_REPOS_DIR
@@ -57,7 +62,7 @@ npm run update-android-sdk  # Kotlin バージョンも自動で調整されま�
 #   `compileSdkVersion is not specified` や
 #   `Could not find method kotlinOptions()`
 #   といったエラーが発生します。
-#   実行時に Java 17 以上がインストールされているかを確認し、
+#   実行時に Java 11 以上がインストールされているかを確認し、
 #   足りない場合はエラーを表示します。
 #   `JAVA_HOME` が設定されている場合は
 #   `gradle.properties` に `org.gradle.java.home` を追記します。
@@ -74,7 +79,7 @@ npm run android   # または npm run ios
 
 ### Android ビルドメモ
 
-- JDK 17 を利用してください。
+- JDK 11 を利用してください。
 - ビルドに失敗したら `npm run update-android-sdk` と
   `./gradlew.bat clean` を試してください。
 
@@ -143,7 +148,7 @@ API は `http://localhost:3000` で利用可能になります。
 3. `android` と `ios` フォルダーが無い場合は次のコマンドで生成して配置します。
 
 ```powershell
-npx react-native init AmanaTmp --template react-native@0.72.7
+npx react-native init AmanaTmp --template react-native@0.71.8
 Move-Item AmanaTmp/android ./android -Force
 Move-Item AmanaTmp/ios ./ios -Force
 Remove-Item -Recurse -Force AmanaTmp
@@ -282,7 +287,7 @@ $env:GRADLE_USER_HOME = "D:\\gradle-cache"
 本リポジトリでは `npm run update-android-sdk` を用意しており、実行すると
 `compileSdkVersion` と `targetSdkVersion` を **34** に変更するとともに、
 Gradle ラッパーと Android Gradle Plugin を推奨バージョンに更新します。
-また、Java 17 がインストールされているかをチェックし、
+また、Java 11 がインストールされているかをチェックし、
 不足している場合はエラーを表示します。
 `JAVA_HOME` が指定されている場合は `gradle.properties` の
 `org.gradle.java.home` を自動で設定します。
