@@ -11,7 +11,7 @@ APIサーバーはコアとなるデータベーススキーマを定義し、�
 - JDK 11
 - Android NDK 23.1
 
-推奨バージョン構成: React Native 0.71.8 + @rnmapbox/maps 10.5.0 + Prisma v5
+推奨バージョン構成: React Native 0.71.8 + @rnmapbox/maps 10.1.39 + Prisma v5
 現行の React Native 0.72.x は安定版リリース前で不具合が報告されています。Mapbox を利用する場合は 0.71 系を推奨します。
 
 サーバーは CommonJS モジュールとして構成されており、`npm run dev` を実行すると `ts-node-dev` を介して起動します。
