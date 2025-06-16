@@ -6,6 +6,14 @@ const androidDir = path.resolve(__dirname, '../mobile/android');
 const wrapperProp = path.join(androidDir, 'gradle/wrapper/gradle-wrapper.properties');
 const buildGradle = path.join(androidDir, 'build.gradle');
 const appBuildGradle = path.join(androidDir, 'app', 'build.gradle');
+const androidManifest = path.join(
+  androidDir,
+  'app',
+  'src',
+  'main',
+  'AndroidManifest.xml',
+);
+const appJsonPath = path.resolve(__dirname, '../mobile/app.json');
 const pluginDirs = [
   path.resolve(__dirname, '../mobile/node_modules/react-native-gradle-plugin'),
   path.resolve(__dirname, '../mobile/node_modules/@react-native/gradle-plugin'),
@@ -14,6 +22,22 @@ let pluginDir = pluginDirs.find((d) => fs.existsSync(d));
 let pluginBuild = pluginDir ? path.join(pluginDir, 'build.gradle.kts') : null;
 const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox/maps/android/build.gradle');
 const gradleProperties = path.join(androidDir, 'gradle.properties');
+
+// Resolve package name for Android namespace
+let packageName = process.env.ANDROID_PACKAGE_NAME;
+if (!packageName && fs.existsSync(appJsonPath)) {
+  try {
+    const appJson = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'));
+    if (appJson.name) {
+      packageName = `com.${appJson.name}`;
+    }
+  } catch (e) {
+    // fall back to default below
+  }
+}
+if (!packageName) {
+  packageName = 'com.amana.app';
+}
 
 // Check Java version
 let javaVersionOut;
@@ -33,6 +57,34 @@ if (!fs.existsSync(androidDir)) {
   console.error('android directory not found. Run react-native init first.');
   process.exit(1);
 }
+
+// Ensure namespace and applicationId are set
+function ensureNamespace() {
+  if (!fs.existsSync(appBuildGradle)) return;
+  let gradle = fs.readFileSync(appBuildGradle, 'utf8');
+  let changed = false;
+  if (!/namespace\s+['"][^'"]+['"]/.test(gradle)) {
+    gradle = gradle.replace(/android\s*\{/, `android {\n    namespace "${packageName}"`);
+    changed = true;
+  }
+  if (!/applicationId\s+['"][^'"]+['"]/.test(gradle)) {
+    gradle = gradle.replace(/defaultConfig\s*\{/, `defaultConfig {\n        applicationId "${packageName}"`);
+    changed = true;
+  }
+  if (changed) {
+    fs.writeFileSync(appBuildGradle, gradle);
+    console.log(`Set Android namespace to ${packageName}`);
+  }
+  if (fs.existsSync(androidManifest)) {
+    let manifest = fs.readFileSync(androidManifest, 'utf8');
+    if (!/manifest\s+package=/.test(manifest)) {
+      manifest = manifest.replace(/<manifest/, `<manifest package="${packageName}"`);
+      fs.writeFileSync(androidManifest, manifest);
+    }
+  }
+}
+
+ensureNamespace();
 
 // Record JAVA_HOME for Gradle if possible
 if (fs.existsSync(gradleProperties)) {
