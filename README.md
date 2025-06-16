@@ -58,6 +58,8 @@ cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
 cd $env:GITHUB_REPOS_DIR\amana
+# 必要に応じてパッケージ名を指定
+$env:ANDROID_PACKAGE_NAME = 'com.example.amana'
 npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
 # ※このコマンドで Android SDK 周りを更新しないと
 #   `compileSdkVersion is not specified` や
@@ -167,12 +169,16 @@ Remove-Item -Recurse -Force AmanaTmp
   `gradle-wrapper.properties` や `build.gradle` が書き換えられます。
   また、Kotlin バージョンの不一致によるビルドエラーを防ぐため、
    `react-native-gradle-plugin` の設定も自動で書き換えられます。
-   変更後は Android プロジェクト (`mobile/android`) のルートで
-   `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
-   `node_modules` が無い場合は `cd mobile` して `npm install` を行います。
+ 変更後は Android プロジェクト (`mobile/android`) のルートで
+  `./gradlew clean`（Windows では `\.\gradlew.bat clean`）を実行してください。
+  `node_modules` が無い場合は `cd mobile` して `npm install` を行います。
   React Native 0.72 以降では `react-native-gradle-plugin` が自動で
    インストールされるため、個別に追加する必要はありません。
-   詳細は後述の「Android API レベルの更新」節も参照します。
+  また、`ANDROID_PACKAGE_NAME` 環境変数を指定すると
+  `update-android-sdk` が `namespace` と `applicationId` を自動設定します。
+  未設定のままだと `gradlew` 実行時に `No package name found` エラーになるため、
+  任意のパッケージ名 (例: `com.example.amana`) を設定してください。
+  詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
    `npm run android` は内部で `npm run update-android-sdk` を呼び出し、
