@@ -20,12 +20,12 @@ let javaVersionOut;
 try {
   javaVersionOut = execSync('java -version 2>&1', { encoding: 'utf8' });
 } catch (e) {
-  console.error('Java not found. Please install JDK 11 and set JAVA_HOME.');
+  console.error('Java not found. Please install JDK 17 and set JAVA_HOME.');
   process.exit(1);
 }
 const match = javaVersionOut.match(/version "(\d+)/);
-if (!match || parseInt(match[1], 10) < 11) {
-  console.error('JDK 11 or newer is required. Current java -version output:\n' + javaVersionOut);
+if (!match || parseInt(match[1], 10) < 17) {
+  console.error('JDK 17 or newer is required. Current java -version output:\n' + javaVersionOut);
   process.exit(1);
 }
 
@@ -48,23 +48,41 @@ if (fs.existsSync(gradleProperties)) {
     fs.writeFileSync(gradleProperties, props);
     console.log('Updated org.gradle.java.home in gradle.properties');
   } else {
-    console.warn('JAVA_HOME が設定されていません。JDK 11 のパスを指定してください。');
+    console.warn('JAVA_HOME が設定されていません。JDK 17 のパスを指定してください。');
   }
+  let props2 = fs.readFileSync(gradleProperties, 'utf8');
+  if (!/^hermesEnabled/m.test(props2)) {
+    props2 += '\nhermesEnabled=true\n';
+  } else {
+    props2 = props2.replace(/^hermesEnabled=.*/m, 'hermesEnabled=true');
+  }
+  if (!/^ndkVersion/m.test(props2)) {
+    props2 += 'ndkVersion=23.1.7779620\n';
+  } else {
+    props2 = props2.replace(/^ndkVersion=.*/m, 'ndkVersion=23.1.7779620');
+  }
+  fs.writeFileSync(gradleProperties, props2);
 }
 
 // Update gradle wrapper
 if (fs.existsSync(wrapperProp)) {
   let data = fs.readFileSync(wrapperProp, 'utf8');
   data = data.replace(/distributionUrl=.*gradle-.*-all.zip/,
-    'distributionUrl=https\://services.gradle.org/distributions/gradle-8.1.1-all.zip');
+    'distributionUrl=https\://services.gradle.org/distributions/gradle-8.0.2-all.zip');
   fs.writeFileSync(wrapperProp, data);
-  console.log('Updated gradle wrapper to 8.1.1');
+  console.log('Updated gradle wrapper to 8.0.2');
 }
 
 // Update Android Gradle plugin
 if (fs.existsSync(buildGradle)) {
   let data = fs.readFileSync(buildGradle, 'utf8');
-  data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.1.2');
+  if (/ext\.kotlin_version/.test(data)) {
+    data = data.replace(/ext\.kotlin_version\s*=\s*['"][^'"]+['"]/,
+      "ext.kotlin_version = '1.8.10'");
+  } else {
+    data = data.replace(/buildscript\s*\{/, `$&\n    ext.kotlin_version = '1.8.10'`);
+  }
+  data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.0.2');
   data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
   if (/compileSdkVersion/.test(data)) {
     data = data.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 34');
@@ -75,6 +93,11 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
+  }
+  if (/ndkVersion/.test(data)) {
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
   }
   fs.writeFileSync(buildGradle, data);
   console.log('Updated Android Gradle plugin and SDK versions');
@@ -93,6 +116,11 @@ if (fs.existsSync(appBuildGradle)) {
   } else {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
+  if (/ndkVersion/.test(data)) {
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+  } else {
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+  }
   if (/buildFeatures/.test(data)) {
     data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
       return /buildConfig\s+true/.test(m)
@@ -106,19 +134,25 @@ if (fs.existsSync(appBuildGradle)) {
   }
   if (/compileOptions/.test(data)) {
     data = data.replace(/sourceCompatibility\s+JavaVersion\.VERSION_\d+/,
-      'sourceCompatibility JavaVersion.VERSION_11');
+      'sourceCompatibility JavaVersion.VERSION_17');
     data = data.replace(/targetCompatibility\s+JavaVersion\.VERSION_\d+/,
-      'targetCompatibility JavaVersion.VERSION_11');
+      'targetCompatibility JavaVersion.VERSION_17');
   } else {
     data = data.replace(/android\s*\{/, (m) =>
-      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_11\n        targetCompatibility JavaVersion.VERSION_11\n    }`);
+      `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }`);
   }
   if (/kotlinOptions/.test(data)) {
     data = data.replace(/jvmTarget\s*=\s*"?\d+"?/,
-      'jvmTarget = "11"');
+      'jvmTarget = "17"');
   } else {
     data = data.replace(/android\s*\{/, (m) =>
-      `${m}\n    kotlinOptions {\n        jvmTarget = "11"\n    }`);
+      `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
+  }
+  if (/hermesEnabled\s*[:=]\s*false/.test(data)) {
+    data = data.replace(/hermesEnabled\s*[:=]\s*false/, 'hermesEnabled = true');
+  }
+  if (/enableHermes\s*[:=]\s*false/.test(data)) {
+    data = data.replace(/enableHermes\s*[:=]\s*false/, 'enableHermes true');
   }
   fs.writeFileSync(appBuildGradle, data);
   console.log('Updated compileSdkVersion and targetSdkVersion to 34 in app/build.gradle');
