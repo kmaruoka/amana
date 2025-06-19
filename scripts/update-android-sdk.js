@@ -137,7 +137,9 @@ if (fs.existsSync(buildGradle)) {
   data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.0.2');
   data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
   if (/compileSdkVersion/.test(data)) {
-    data = data.replace(/compileSdkVersion\s*=\s*\d+/, 'compileSdkVersion = 34');
+    data = data.replace(/compileSdkVersion\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'compileSdkVersion = 34');
+  } else if (/compileSdk\b/.test(data)) {
+    data = data.replace(/compileSdk\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
@@ -160,6 +162,8 @@ if (fs.existsSync(appBuildGradle)) {
   let data = fs.readFileSync(appBuildGradle, 'utf8');
   if (/compileSdkVersion/.test(data)) {
     data = data.replace(/compileSdkVersion\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'compileSdkVersion = 34');
+  } else if (/compileSdk\b/.test(data)) {
+    data = data.replace(/compileSdk\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
@@ -246,9 +250,9 @@ if (fs.existsSync(rnmapboxGradle)) {
 // Final sanity check
 if (fs.existsSync(appBuildGradle)) {
   const finalData = fs.readFileSync(appBuildGradle, 'utf8');
-  if (!/compileSdkVersion\s*=?\s*34/.test(finalData)) {
+  if (!/compileSdk(?:Version)?\s*=?\s*34/.test(finalData)) {
     console.warn(
-      'compileSdkVersion を自動で更新できませんでした。`mobile/android/app/build.gradle` を手動で編集してください。'
+      'compileSdkVersion (compileSdk) を自動で更新できませんでした。`mobile/android/app/build.gradle` を手動で編集してください。'
     );
   }
   if (!/kotlinOptions/.test(finalData)) {
