@@ -59,7 +59,7 @@ npm install react-native-screens@4.11.1
 npm install react-native-gradle-plugin
 cd $env:GITHUB_REPOS_DIR\amana
 # 必要に応じてパッケージ名を指定
-$env:ANDROID_PACKAGE_NAME = 'com.example.amana'
+$env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
 npm run update-android-sdk  # Kotlin バージョンも自動で調整されます
 # ※このコマンドで Android SDK 周りを更新しないと
 #   `compileSdkVersion is not specified` や
@@ -177,7 +177,7 @@ Remove-Item -Recurse -Force AmanaTmp
   また、`ANDROID_PACKAGE_NAME` 環境変数を指定すると
   `update-android-sdk` が `namespace` と `applicationId` を自動設定します。
   未設定のままだと `gradlew` 実行時に `No package name found` エラーになるため、
-  任意のパッケージ名 (例: `com.example.amana`) を設定してください。
+  任意のパッケージ名 (例: `jp.kmaruoka.amana`) を設定してください。
   詳細は後述の「Android API レベルの更新」節も参照します。
 
 7. エミュレーターを起動するか実機を接続し、`npm run android` または `npm run ios` を実行します。
