@@ -312,6 +312,11 @@ if (fs.existsSync(appBuildGradle)) {
     console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
     console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
+  if (debug) {
+    const lines = finalData.match(/^.*compileSdk.*$/gm);
+    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
+  }
   if (!compileSdkOK) {
     console.warn(
       'compileSdkVersion (compileSdk) を自動で更新できませんでした。`mobile/android/app/build.gradle` を手動で編集してください。'
