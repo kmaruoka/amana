@@ -10,6 +10,7 @@ $env:JAVA_HOME="JDK17のインストールフォルダ"
 # リポジトリ取得
 cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
+cd amana
 
 # サーバーセットアップ (ルートで実行)
 cd $env:GITHUB_REPOS_DIR\amana
