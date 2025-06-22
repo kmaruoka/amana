@@ -349,7 +349,8 @@ if (fs.existsSync(appBuildGradle)) {
       'compileSdkVersion (compileSdk) を自動で更新できませんでした。`mobile/android/app/build.gradle` を手動で編集してください。'
     );
   }
-  if (!/kotlinOptions/.test(finalData)) {
+  const hasKotlinPluginFinal = hasKotlinAndroidPlugin(finalData);
+  if (hasKotlinPluginFinal && !/kotlinOptions/.test(finalData)) {
     console.warn(
       'kotlinOptions ブロックが見つかりません。kotlin-android プラグインが適用されているか確認してください。'
     );
