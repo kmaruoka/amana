@@ -97,3 +97,16 @@ cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 ```
 
 パッチ適用後、`mobile/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java` に `compatRegisterReceiver` の呼び出しが挿入されていることを確認できます。
+
+## Hermes 関連のクラッシュ
+
+`couldn't find DSO to load: libjscexecutor.so` と表示される場合、Hermes 設定が無効になっています。次のコマンドで設定を再適用し、キャッシュを削除してからビルドし直してください。
+
+```powershell
+cd $env:GITHUB_REPOS_DIR\amana
+npm run update-android-sdk
+cd $env:GITHUB_REPOS_DIR\amana\mobile\android
+.\gradlew.bat clean
+cd ..
+npm run android
+```
