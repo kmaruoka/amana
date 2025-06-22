@@ -24,6 +24,31 @@ const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox
 const nodeModulesDir = path.resolve(__dirname, '../mobile/node_modules');
 const gradleProperties = path.join(androidDir, 'gradle.properties');
 
+function ensureHermesBlock() {
+  if (!fs.existsSync(appBuildGradle)) return;
+  let gradle = fs.readFileSync(appBuildGradle, 'utf8');
+  if (!/project\.ext\.react\s*=/.test(gradle)) {
+    gradle = gradle.replace(
+      /apply from: ["']..\/..\/node_modules\/react-native\/react\.gradle["']/,
+      (m) => `project.ext.react = [\n    enableHermes: true\n]\n${m}`,
+    );
+    fs.writeFileSync(appBuildGradle, gradle);
+    console.log('Inserted project.ext.react block for Hermes');
+    return;
+  }
+  if (!/enableHermes\s*[:=]\s*true/.test(gradle)) {
+    gradle = gradle.replace(/project\.ext\.react\s*=\s*\[([^\]]*)\]/s, (m, inner) => {
+      if (/enableHermes/.test(inner)) {
+        return m.replace(/enableHermes\s*[:=]\s*false/, 'enableHermes: true');
+      }
+      const trimmed = inner.trim();
+      return `project.ext.react = [${trimmed ? `\n    ${trimmed},` : ''}\n    enableHermes: true\n]`;
+    });
+    fs.writeFileSync(appBuildGradle, gradle);
+    console.log('Updated enableHermes in project.ext.react');
+  }
+}
+
 function updateModuleCompileOptions(gradlePath) {
   if (!fs.existsSync(gradlePath)) return;
   let data = fs.readFileSync(gradlePath, 'utf8');
@@ -483,4 +508,5 @@ function patchDevSupportManager() {
   console.log('Patched DevSupportManagerBase for Android 12+');
 }
 patchDevSupportManager();
+ensureHermesBlock();
 
