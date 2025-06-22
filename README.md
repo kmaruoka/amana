@@ -48,3 +48,23 @@ npx react-native doctor
 npm run android   # または npm run ios
 ```
 
+## エラー時のリスタート手順
+
+ビルドエラーなどで `android` フォルダがロックされ、クリーンアップに失敗する場合は次の手順で環境をリセットしてください。
+
+```powershell
+# エミュレータを終了
+adb emu kill
+
+# Gradle デーモンを停止してロックを解除
+cd $env:GITHUB_REPOS_DIR\amana\mobile\android
+.\gradlew.bat --stop
+
+# リポジトリをクリーンな状態に戻す
+cd $env:GITHUB_REPOS_DIR\amana
+git reset --hard
+git clean -fdx
+git pull
+```
+
+その後、上記 Quick Start の "モバイルセットアップ" 以降のコマンドを再実行します。
