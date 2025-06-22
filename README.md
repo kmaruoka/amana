@@ -4,6 +4,9 @@
 
 - Node.js 18 以上
 - JDK 17 以上
+- Android SDK Build-Tools 36
+- Android SDK Command-line Tools (latest)
+- Android SDK Platform-Tools
 
 ## Quick Start
 
