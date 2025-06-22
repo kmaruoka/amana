@@ -296,21 +296,21 @@ if (fs.existsSync(appBuildGradle)) {
   let compileSdkOK =
     /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) ||
     /compileSdk\s*=?\s*34/.test(finalData);
-  if (
-    !compileSdkOK &&
-    /compileSdk(?:Version)?\s*=?[\s\S]*ext[\s\S]*compileSdk(?:Version)?/.test(finalData)
-  ) {
-    if (fs.existsSync(buildGradle)) {
-      const rootData = fs.readFileSync(buildGradle, 'utf8');
-      if (debug) {
-        const lines = rootData.match(/^.*compileSdk.*$/gm);
-        console.log('[DEBUG] root build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
-      }
-      compileSdkOK =
-        /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
-        /compileSdk\s*=\s*34/.test(rootData) ||
-        /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+  if (!compileSdkOK && fs.existsSync(buildGradle)) {
+    const rootData = fs.readFileSync(buildGradle, 'utf8');
+    if (debug) {
+      const lines = rootData.match(/^.*compileSdk.*$/gm);
+      console.log('[DEBUG] root build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
     }
+    compileSdkOK =
+      /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
+      /compileSdk\s*=\s*34/.test(rootData) ||
+      /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+  }
+  if (debug) {
+    const lines = finalData.match(/^.*compileSdk.*$/gm);
+    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
   if (debug) {
     const lines = finalData.match(/^.*compileSdk.*$/gm);
