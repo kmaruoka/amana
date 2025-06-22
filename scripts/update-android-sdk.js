@@ -376,13 +376,13 @@ if (fs.existsSync(nodeModulesDir)) {
   );
   if (fs.existsSync(screensKt)) {
     let ktData = fs.readFileSync(screensKt, 'utf8');
-    if (/androidx\.appcompat\.R\.attr\.colorPrimary/.test(ktData)) {
+    if (/R\.attr\.colorPrimary/.test(ktData) && !/androidx\.appcompat\.R\.attr\.colorPrimary/.test(ktData)) {
       ktData = ktData.replace(
-        /androidx\.appcompat\.R\.attr\.colorPrimary/g,
-        'R.attr.colorPrimary',
+        /R\.attr\.colorPrimary/g,
+        'androidx.appcompat.R.attr.colorPrimary',
       );
       fs.writeFileSync(screensKt, ktData);
-      console.log('Reverted react-native-screens colorPrimary reference');
+      console.log('Patched react-native-screens colorPrimary reference');
     }
   }
 }
