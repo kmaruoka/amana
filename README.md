@@ -39,7 +39,7 @@ $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
 npm run update-android-sdk
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
-cd $env:GITHUB_REPOS_DIR\amana
+cd $env:GITHUB_REPOS_DIR\amana\mobile
 npx react-native doctor
 npm run android   # または npm run ios
 ```

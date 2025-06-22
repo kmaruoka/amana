@@ -77,9 +77,18 @@ function ensureNamespace() {
   }
   if (fs.existsSync(androidManifest)) {
     let manifest = fs.readFileSync(androidManifest, 'utf8');
-    if (!/manifest\s+package=/.test(manifest)) {
-      manifest = manifest.replace(/<manifest/, `<manifest package="${packageName}"`);
+    if (!/<manifest[^>]*\s+package=/.test(manifest)) {
+      manifest = manifest.replace(
+        /<manifest/,
+        `<manifest package="${packageName}"`
+      );
       fs.writeFileSync(androidManifest, manifest);
+    } else if (/namespace\s+['"][^'"]+['"]/.test(gradle)) {
+      const updated = manifest.replace(/\s+package="[^"]*"/, '');
+      if (manifest !== updated) {
+        fs.writeFileSync(androidManifest, updated);
+        console.log('Removed package attribute from AndroidManifest.xml');
+      }
     }
   }
 }
