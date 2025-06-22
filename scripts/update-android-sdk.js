@@ -169,6 +169,9 @@ function hasKotlinAndroidPlugin(data) {
 }
 
 // Record JAVA_HOME for Gradle if possible
+if (!fs.existsSync(gradleProperties)) {
+  fs.writeFileSync(gradleProperties, '');
+}
 if (fs.existsSync(gradleProperties)) {
   const javaHome = process.env.JAVA_HOME;
   if (javaHome) {
