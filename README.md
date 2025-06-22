@@ -40,6 +40,7 @@ cd $env:GITHUB_REPOS_DIR\amana
 # .env の MAPBOX_DOWNLOADS_TOKEN を設定
 npm run setup-gradle
 cd $env:GITHUB_REPOS_DIR\amana
+# Android 12 以降で必要となるパッチも含む
 $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
 npm run update-android-sdk  # 依存モジュールの BuildConfig と React Native パッチを適用
 # mobile の npm install 時にも自動実行されますが、
@@ -77,16 +78,16 @@ git pull
 
 その後、上記 Quick Start の "モバイルセットアップ" 以降のコマンドを再実行します。
 
-## Android 14 で起動時にクラッシュする場合
+## Android 12 以降で起動時にクラッシュする場合
 
-エミュレータや実機が Android 14(API 34) の場合、起動直後に次のエラーが表示されることがあります。
+エミュレータや実機が Android 12(API 31) 以上の場合、起動直後に次のエラーが表示されることがあります。
 
 ```
 java.lang.RuntimeException: Requested enabled DevSupportManager, but BridgeDevSupportManager class was not found or could not be created
 Caused by: java.lang.SecurityException: One of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED should be specified
 ```
 
-これは React Native 0.71 系の `DevSupportManagerBase.java` が Android 14 の仕様に対応していないためです。モバイルの `npm install` 後に自動でパッチが適用されますが、何らかの理由で適用されていない場合は次のコマンドを実行し、`./gradlew clean` を実行してからビルドし直してください。
+これは React Native 0.71 系の `DevSupportManagerBase.java` が Android 12 以降の仕様に対応していないためです。モバイルの `npm install` 後に自動でパッチが適用されますが、何らかの理由で適用されていない場合は次のコマンドを実行し、`./gradlew clean` を実行してからビルドし直してください。
 
 ```powershell
 cd $env:GITHUB_REPOS_DIR\amana

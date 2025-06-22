@@ -443,7 +443,7 @@ if (fs.existsSync(appBuildGradle)) {
   }
 }
 
-// Patch DevSupportManagerBase to handle Android 14 receiver requirements
+// Patch DevSupportManagerBase to handle receiver requirements on Android 12+
 const devSupportManagerBase = path.join(
   nodeModulesDir,
   'react-native',
@@ -477,10 +477,10 @@ function patchDevSupportManager() {
     pattern,
     'compatRegisterReceiver(mApplicationContext, mReloadAppBroadcastReceiver, filter, true);',
   );
-  const helper = `\n  /**\n   * Starting with Android 14, apps using context-registered receivers must specify whether the receiver is exported.\n   */\n  private void compatRegisterReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter, boolean exported) {\n    if (Build.VERSION.SDK_INT >= 34 && context.getApplicationInfo().targetSdkVersion >= 34) {\n      context.registerReceiver(receiver, filter, exported ? Context.RECEIVER_EXPORTED : Context.RECEIVER_NOT_EXPORTED);\n    } else {\n      context.registerReceiver(receiver, filter);\n    }\n  }\n`;
+  const helper = `\n  /**\n   * Starting with Android 12, apps using context-registered receivers must specify whether the receiver is exported.\n   */\n  private void compatRegisterReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter, boolean exported) {\n    if (Build.VERSION.SDK_INT >= 31 && context.getApplicationInfo().targetSdkVersion >= 31) {\n      context.registerReceiver(receiver, filter, exported ? Context.RECEIVER_EXPORTED : Context.RECEIVER_NOT_EXPORTED);\n    } else {\n      context.registerReceiver(receiver, filter);\n    }\n  }\n`;
   data = data.replace(/\n}\s*$/, `\n${helper}\n}`);
   fs.writeFileSync(devSupportManagerBase, data);
-  console.log('Patched DevSupportManagerBase for Android 14');
+  console.log('Patched DevSupportManagerBase for Android 12+');
 }
 patchDevSupportManager();
 
