@@ -88,8 +88,9 @@ ensureNamespace();
 
 function hasKotlinAndroidPlugin(data) {
   return (
-    /['"]kotlin-android['"]/i.test(data) ||
-    /org\.jetbrains\.kotlin\.android/.test(data)
+    /['"]kotlin-android['"]/.test(data) ||
+    /org\.jetbrains\.kotlin\.android/.test(data) ||
+    /kotlin\s*\(\s*['"]android['"]\s*\)/.test(data)
   );
 }
 
@@ -266,7 +267,12 @@ if (fs.existsSync(appBuildGradle)) {
   }
   const hasKotlinPlugin = hasKotlinAndroidPlugin(data);
   if (/kotlinOptions/.test(data)) {
-    data = data.replace(/jvmTarget\s*=\s*"?\d+"?/, 'jvmTarget = "17"');
+    if (hasKotlinPlugin) {
+      data = data.replace(/jvmTarget\s*=\s*"?\d+"?/, 'jvmTarget = "17"');
+    } else {
+      data = data.replace(/kotlinOptions\s*\{[^}]*\}/s, '');
+      console.warn('kotlin-android プラグインが無いため既存の kotlinOptions ブロックを削除しました');
+    }
   } else if (hasKotlinPlugin) {
     data = data.replace(/android\s*\{/, (m) => `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
   } else {
