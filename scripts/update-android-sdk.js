@@ -42,6 +42,27 @@ function updateModuleCompileOptions(gradlePath) {
   }
 }
 
+function updateModuleBuildFeatures(gradlePath) {
+  if (!fs.existsSync(gradlePath)) return;
+  let data = fs.readFileSync(gradlePath, 'utf8');
+  let changed = false;
+  if (/android\s*\{/.test(data)) {
+    if (/buildFeatures/.test(data)) {
+      if (!/buildConfig\s+true/.test(data)) {
+        data = data.replace(/buildFeatures\s*\{/, '$&\n        buildConfig true');
+        changed = true;
+      }
+    } else {
+      data = data.replace(/android\s*\{/, (m) => `${m}\n    buildFeatures {\n        buildConfig true\n    }`);
+      changed = true;
+    }
+  }
+  if (changed) {
+    fs.writeFileSync(gradlePath, data);
+    console.log(`Enabled buildConfig in ${path.basename(path.dirname(gradlePath))}`);
+  }
+}
+
 // Resolve package name for Android namespace
 let packageName = process.env.ANDROID_PACKAGE_NAME;
 if (!packageName && fs.existsSync(appJsonPath)) {
@@ -337,6 +358,32 @@ if (fs.existsSync(nodeModulesDir)) {
   for (const mod of modules) {
     const g = path.join(nodeModulesDir, mod, 'android', 'build.gradle');
     updateModuleCompileOptions(g);
+    updateModuleBuildFeatures(g);
+  }
+
+  // react-native-screens 3.x uses R.attr which breaks with newer SDK
+  const screensKt = path.join(
+    nodeModulesDir,
+    'react-native-screens',
+    'android',
+    'src',
+    'main',
+    'java',
+    'com',
+    'swmansion',
+    'rnscreens',
+    'ScreenStackHeaderConfig.kt',
+  );
+  if (fs.existsSync(screensKt)) {
+    let ktData = fs.readFileSync(screensKt, 'utf8');
+    if (/R\.attr\.colorPrimary/.test(ktData)) {
+      ktData = ktData.replace(
+        /R\.attr\.colorPrimary/g,
+        'androidx.appcompat.R.attr.colorPrimary',
+      );
+      fs.writeFileSync(screensKt, ktData);
+      console.log('Patched react-native-screens colorPrimary reference');
+    }
   }
 }
 
