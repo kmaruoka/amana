@@ -41,8 +41,9 @@ cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
 cd $env:GITHUB_REPOS_DIR\amana
 $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
-npm run update-android-sdk  # 依存モジュールの BuildConfig と react-native-screens 用パッチを適用
-# 新しい依存パッケージをインストールした後は再実行してください
+npm run update-android-sdk  # 依存モジュールの BuildConfig と React Native パッチを適用
+# mobile の npm install 時にも自動実行されますが、
+# 新しい依存パッケージを追加した後は手動で再実行してください
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
 # android フォルダがロックされる場合は Gradle デーモンを停止
@@ -85,7 +86,7 @@ java.lang.RuntimeException: Requested enabled DevSupportManager, but BridgeDevSu
 Caused by: java.lang.SecurityException: One of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED should be specified
 ```
 
-これは React Native 0.71 系の `DevSupportManagerBase.java` が Android 14 の仕様に対応していないためです。以下の手順でパッチを適用し、`./gradlew clean` を実行してからビルドし直してください。
+これは React Native 0.71 系の `DevSupportManagerBase.java` が Android 14 の仕様に対応していないためです。モバイルの `npm install` 後に自動でパッチが適用されますが、何らかの理由で適用されていない場合は次のコマンドを実行し、`./gradlew clean` を実行してからビルドし直してください。
 
 ```powershell
 cd $env:GITHUB_REPOS_DIR\amana
