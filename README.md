@@ -61,6 +61,9 @@ adb emu kill
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat --stop
 
+# それでも削除できない場合は Node/Java プロセスを終了
+Get-Process node, java -ErrorAction SilentlyContinue | Stop-Process -Force
+
 # リポジトリをクリーンな状態に戻す
 cd $env:GITHUB_REPOS_DIR\amana
 git reset --hard
