@@ -6,7 +6,8 @@
   "scripts": {
     "start": "react-native start",
     "android": "node ../scripts/update-android-sdk.js && react-native run-android",
-    "ios": "react-native run-ios"
+    "ios": "react-native run-ios",
+    "postinstall": "node ../scripts/update-android-sdk.js"
   },
   "dependencies": {
     "react": "18.2.0",
