@@ -104,6 +104,16 @@ if (!packageName) {
   packageName = 'com.amana.app';
 }
 
+const mainApplication = path.join(
+  androidDir,
+  'app',
+  'src',
+  'main',
+  'java',
+  ...packageName.split('.'),
+  'MainApplication.java',
+);
+
 // Check Java version
 let javaVersionOut;
 try {
@@ -159,6 +169,17 @@ function ensureNamespace() {
 }
 
 ensureNamespace();
+
+function disableDeveloperSupport() {
+  if (!fs.existsSync(mainApplication)) return;
+  let data = fs.readFileSync(mainApplication, 'utf8');
+  if (data.includes('return BuildConfig.DEBUG')) {
+    data = data.replace('return BuildConfig.DEBUG;', 'return false;');
+    fs.writeFileSync(mainApplication, data);
+    console.log('Set getUseDeveloperSupport() to return false');
+  }
+}
+disableDeveloperSupport();
 
 function hasKotlinAndroidPlugin(data) {
   return (
