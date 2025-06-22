@@ -156,7 +156,7 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion = "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
@@ -215,7 +215,7 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion = "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
