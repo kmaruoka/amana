@@ -101,18 +101,42 @@ if (!packageName && fs.existsSync(appJsonPath)) {
   }
 }
 if (!packageName) {
-  packageName = 'com.amana.app';
+  packageName = 'jp.kmaruoka.amana';
 }
 
-const mainApplication = path.join(
-  androidDir,
-  'app',
-  'src',
-  'main',
-  'java',
-  ...packageName.split('.'),
-  'MainApplication.java',
-);
+function findMainApplication() {
+  const srcRoot = path.join(androidDir, 'app', 'src', 'main', 'java');
+  if (!fs.existsSync(srcRoot)) return null;
+  const parts = packageName.split('.');
+  const direct = path.join(srcRoot, ...parts, 'MainApplication.java');
+  if (fs.existsSync(direct)) return direct;
+  let result = null;
+  function walk(dir) {
+    if (result) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const ent of entries) {
+      const p = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        walk(p);
+      } else if (ent.isFile() && ent.name === 'MainApplication.java') {
+        result = p;
+        break;
+      }
+    }
+  }
+  walk(srcRoot);
+  return result;
+}
+
+let mainApplication = findMainApplication();
+if (mainApplication) {
+  const srcRoot = path.join(androidDir, 'app', 'src', 'main', 'java');
+  const relative = path.relative(srcRoot, path.dirname(mainApplication));
+  const parts = relative.split(path.sep).filter(Boolean);
+  if (parts.length > 0) {
+    packageName = parts.join('.');
+  }
+}
 
 // Check Java version
 let javaVersionOut;
@@ -171,7 +195,7 @@ function ensureNamespace() {
 ensureNamespace();
 
 function disableDeveloperSupport() {
-  if (!fs.existsSync(mainApplication)) return;
+  if (!mainApplication || !fs.existsSync(mainApplication)) return;
   let data = fs.readFileSync(mainApplication, 'utf8');
   if (data.includes('return BuildConfig.DEBUG')) {
     data = data.replace('return BuildConfig.DEBUG;', 'return false;');
@@ -533,4 +557,12 @@ function patchDevSupportManager() {
 }
 patchDevSupportManager();
 ensureHermesBlock();
+
+try {
+  const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+  execSync(`${gradlew} clean`, { cwd: androidDir, stdio: 'inherit' });
+  console.log('Ran gradlew clean');
+} catch (e) {
+  console.warn('gradlew clean failed:', e.message);
+}
 
