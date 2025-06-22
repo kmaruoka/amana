@@ -88,7 +88,17 @@ if (fs.existsSync(settingsGradlePath)) {
       fs.writeFileSync(settingsGradlePath, settingsGradle);
       console.log('Inserted Mapbox repository block into settings.gradle');
     } else {
-      console.warn('Could not find repository block in settings.gradle');
+      settingsGradle +=
+        '\n' +
+        'dependencyResolutionManagement {\n' +
+        '    repositories {\n' +
+        formatted +
+        '\n    }\n' +
+        '}\n';
+      fs.writeFileSync(settingsGradlePath, settingsGradle);
+      console.log(
+        'Added dependencyResolutionManagement block with Mapbox repository to settings.gradle'
+      );
     }
   } else {
     console.log('Mapbox repository block already present in settings.gradle');
