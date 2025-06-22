@@ -156,9 +156,9 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   fs.writeFileSync(buildGradle, data);
   console.log('Updated Android Gradle plugin and SDK versions');
@@ -215,9 +215,9 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   if (/buildFeatures/.test(data)) {
     data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
@@ -291,21 +291,26 @@ if (fs.existsSync(rnmapboxGradle)) {
 
 // Final sanity check
 if (fs.existsSync(appBuildGradle)) {
+  const debug = process.env.DEBUG_SDK_UPDATE;
   const finalData = fs.readFileSync(appBuildGradle, 'utf8');
   let compileSdkOK =
     /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) ||
     /compileSdk\s*=?\s*34/.test(finalData);
-  if (
-    !compileSdkOK &&
-    /compileSdk(?:Version)?\s*=?.*ext.*compileSdk(?:Version)?/.test(finalData)
-  ) {
-    if (fs.existsSync(buildGradle)) {
-      const rootData = fs.readFileSync(buildGradle, 'utf8');
-      compileSdkOK =
-        /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
-        /compileSdk\s*=\s*34/.test(rootData) ||
-        /ext.*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+  if (!compileSdkOK && fs.existsSync(buildGradle)) {
+    const rootData = fs.readFileSync(buildGradle, 'utf8');
+    if (debug) {
+      const lines = rootData.match(/^.*compileSdk.*$/gm);
+      console.log('[DEBUG] root build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
     }
+    compileSdkOK =
+      /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
+      /compileSdk\s*=\s*34/.test(rootData) ||
+      /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+  }
+  if (debug) {
+    const lines = finalData.match(/^.*compileSdk.*$/gm);
+    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
   if (!compileSdkOK) {
     console.warn(
