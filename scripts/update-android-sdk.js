@@ -297,14 +297,14 @@ if (fs.existsSync(appBuildGradle)) {
     /compileSdk\s*=?\s*34/.test(finalData);
   if (
     !compileSdkOK &&
-    /compileSdk(?:Version)?\s*=?.*ext.*compileSdk(?:Version)?/.test(finalData)
+    /compileSdk(?:Version)?\s*=?[\s\S]*ext[\s\S]*compileSdk(?:Version)?/.test(finalData)
   ) {
     if (fs.existsSync(buildGradle)) {
       const rootData = fs.readFileSync(buildGradle, 'utf8');
       compileSdkOK =
         /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
         /compileSdk\s*=\s*34/.test(rootData) ||
-        /ext.*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+        /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
     }
   }
   if (!compileSdkOK) {
