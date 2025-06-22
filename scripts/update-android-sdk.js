@@ -86,6 +86,14 @@ function ensureNamespace() {
 
 ensureNamespace();
 
+function hasKotlinAndroidPlugin(data) {
+  return (
+    /['"]kotlin-android['"]/.test(data) ||
+    /org\.jetbrains\.kotlin\.android/.test(data) ||
+    /kotlin\s*\(\s*['"]android['"]\s*\)/.test(data)
+  );
+}
+
 // Record JAVA_HOME for Gradle if possible
 if (fs.existsSync(gradleProperties)) {
   const javaHome = process.env.JAVA_HOME;
@@ -136,13 +144,13 @@ if (fs.existsSync(buildGradle)) {
   }
   data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.0.2');
   data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
-  if (/compileSdk(?:Version)?\s*=?.*ext\.compileSdk(?:Version)?/.test(data)) {
-    data = data.replace(/compileSdk(?:Version)?\s*=?.*ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
-  } else if (/compileSdk(?:Version)?\s*=?.*rootProject\.ext\.compileSdk(?:Version)?/.test(data)) {
-    data = data.replace(/compileSdk(?:Version)?\s*=?.*rootProject\.ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
-  } else if (/compileSdk(?:Version)?/.test(data) || /compileSdk\s*=/.test(data)) {
+  if (/compileSdk(?:Version)?\s*(?:=|\s).*ext\.compileSdk(?:Version)?/.test(data)) {
+    data = data.replace(/compileSdk(?:Version)?\s*(?:=|\s).*ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
+  } else if (/compileSdk(?:Version)?\s*(?:=|\s).*rootProject\.ext\.compileSdk(?:Version)?/.test(data)) {
+    data = data.replace(/compileSdk(?:Version)?\s*(?:=|\s).*rootProject\.ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
+  } else if (/compileSdk(?:Version)?/.test(data) || /compileSdk\s*(?:=|\s)/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
-    data = data.replace(/^(\s*)compileSdk\s*.*$/gm, '$1compileSdk = 34');
+    data = data.replace(/^(\s*)compileSdk(?!Version)\s*.*$/gm, '$1compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
@@ -156,9 +164,9 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   fs.writeFileSync(buildGradle, data);
   console.log('Updated Android Gradle plugin and SDK versions');
@@ -170,18 +178,36 @@ function updateRootExt() {
   let root = fs.readFileSync(buildGradle, 'utf8');
   let changed = false;
 
-  if (/compileSdk(?:Version)?\s*=\s*\d+/.test(root)) {
-    root = root.replace(/compileSdkVersion\s*=\s*\d+/g, 'compileSdkVersion = 34');
-    root = root.replace(/compileSdk\s*=\s*\d+/g, 'compileSdk = 34');
+  const hasCompileSdkVersion = /compileSdkVersion\s*(?:=|\s)\s*\d+/.test(root);
+  const hasCompileSdk = /compileSdk(?!Version)\s*(?:=|\s)\s*\d+/.test(root);
+  if (hasCompileSdkVersion) {
+    root = root.replace(/compileSdkVersion\s*(?:=|\s)\s*\d+/g, 'compileSdkVersion = 34');
     changed = true;
-  } else if (/ext\s*\{/.test(root)) {
+  }
+  if (hasCompileSdk) {
+    root = root.replace(/compileSdk(?!Version)\s*(?:=|\s)\s*\d+/g, 'compileSdk = 34');
+    changed = true;
+  }
+  if (!hasCompileSdkVersion && hasCompileSdk) {
+    root = root.replace(/compileSdk(?!Version)\s*(?:=|\s)\s*\d+/, '$&\n    compileSdkVersion = 34');
+    changed = true;
+  } else if (!hasCompileSdk && !hasCompileSdkVersion && /ext\s*\{/.test(root)) {
     root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
     changed = true;
   }
 
-  if (/targetSdk(?:Version)?\s*=\s*\d+/.test(root)) {
-    root = root.replace(/targetSdkVersion\s*=\s*\d+/g, 'targetSdkVersion = 34');
-    root = root.replace(/targetSdk\s*=\s*\d+/g, 'targetSdk = 34');
+  const hasTargetSdkVersion = /targetSdkVersion\s*(?:=|\s)\s*\d+/.test(root);
+  const hasTargetSdk = /targetSdk(?!Version)\s*(?:=|\s)\s*\d+/.test(root);
+  if (hasTargetSdkVersion) {
+    root = root.replace(/targetSdkVersion\s*(?:=|\s)\s*\d+/g, 'targetSdkVersion = 34');
+    changed = true;
+  }
+  if (hasTargetSdk) {
+    root = root.replace(/targetSdk(?!Version)\s*(?:=|\s)\s*\d+/g, 'targetSdk = 34');
+    changed = true;
+  }
+  if (!hasTargetSdkVersion && hasTargetSdk) {
+    root = root.replace(/targetSdk(?!Version)\s*(?:=|\s)\s*\d+/, '$&\n    targetSdkVersion = 34');
     changed = true;
   }
 
@@ -201,23 +227,23 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/compileSdk(?:Version)?\s*=?.*rootProject\.ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
   } else if (/compileSdk(?:Version)?/.test(data) || /compileSdk\s*=/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
-    data = data.replace(/^(\s*)compileSdk\s*.*$/gm, '$1compileSdk = 34');
+    data = data.replace(/^(\s*)compileSdk(?!Version)\s*.*$/gm, '$1compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
-  if (/targetSdkVersion\s*=?.*ext\.targetSdkVersion/.test(data)) {
-    data = data.replace(/targetSdkVersion\s*=?.*ext\.targetSdkVersion/, 'targetSdkVersion = 34');
-  } else if (/targetSdkVersion\s*=?.*rootProject\.ext\.targetSdkVersion/.test(data)) {
-    data = data.replace(/targetSdkVersion\s*=?.*rootProject\.ext\.targetSdkVersion/, 'targetSdkVersion = 34');
+  if (/targetSdkVersion\s*(?:=|\s).*ext\.targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*(?:=|\s).*ext\.targetSdkVersion/, 'targetSdkVersion = 34');
+  } else if (/targetSdkVersion\s*(?:=|\s).*rootProject\.ext\.targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*(?:=|\s).*rootProject\.ext\.targetSdkVersion/, 'targetSdkVersion = 34');
   } else if (/targetSdkVersion/.test(data)) {
-    data = data.replace(/targetSdkVersion\s*=?\s*[\dA-Za-z_.]+/g, 'targetSdkVersion = 34');
+    data = data.replace(/targetSdkVersion\s*(?:=|\s)\s*[\dA-Za-z_.]+/g, 'targetSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"\n]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   if (/buildFeatures/.test(data)) {
     data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
@@ -239,12 +265,18 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/android\s*\{/, (m) =>
       `${m}\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_17\n        targetCompatibility JavaVersion.VERSION_17\n    }`);
   }
+  const hasKotlinPlugin = hasKotlinAndroidPlugin(data);
   if (/kotlinOptions/.test(data)) {
-    data = data.replace(/jvmTarget\s*=\s*"?\d+"?/,
-      'jvmTarget = "17"');
+    if (hasKotlinPlugin) {
+      data = data.replace(/jvmTarget\s*=\s*"?\d+"?/, 'jvmTarget = "17"');
+    } else {
+      data = data.replace(/kotlinOptions\s*\{[^}]*\}/s, '');
+      console.warn('kotlin-android プラグインが無いため既存の kotlinOptions ブロックを削除しました');
+    }
+  } else if (hasKotlinPlugin) {
+    data = data.replace(/android\s*\{/, (m) => `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
   } else {
-    data = data.replace(/android\s*\{/, (m) =>
-      `${m}\n    kotlinOptions {\n        jvmTarget = "17"\n    }`);
+    console.warn('kotlin-android プラグインが見つからないため kotlinOptions を追加できません');
   }
   if (/hermesEnabled\s*[:=]\s*false/.test(data)) {
     data = data.replace(/hermesEnabled\s*[:=]\s*false/, 'hermesEnabled = true');
@@ -291,21 +323,26 @@ if (fs.existsSync(rnmapboxGradle)) {
 
 // Final sanity check
 if (fs.existsSync(appBuildGradle)) {
+  const debug = process.env.DEBUG_SDK_UPDATE;
   const finalData = fs.readFileSync(appBuildGradle, 'utf8');
   let compileSdkOK =
-    /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) ||
-    /compileSdk\s*=?\s*34/.test(finalData);
-  if (
-    !compileSdkOK &&
-    /compileSdk(?:Version)?\s*=?.*ext.*compileSdk(?:Version)?/.test(finalData)
-  ) {
-    if (fs.existsSync(buildGradle)) {
-      const rootData = fs.readFileSync(buildGradle, 'utf8');
-      compileSdkOK =
-        /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
-        /compileSdk\s*=\s*34/.test(rootData) ||
-        /ext.*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+    /compileSdk(?:Version)?\s*(?:=|\s)\s*34/.test(finalData) ||
+    /compileSdk\s*(?:=|\s)\s*34/.test(finalData);
+  if (!compileSdkOK && fs.existsSync(buildGradle)) {
+    const rootData = fs.readFileSync(buildGradle, 'utf8');
+    if (debug) {
+      const lines = rootData.match(/^.*compileSdk.*$/gm);
+      console.log('[DEBUG] root build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
     }
+    compileSdkOK =
+      /compileSdk(?:Version)?\s*(?:=|\s)\s*34/.test(rootData) ||
+      /compileSdk\s*(?:=|\s)\s*34/.test(rootData) ||
+      /ext[\s\S]*compileSdk(?:Version)?\s*(?:=|\s)\s*34/.test(rootData);
+  }
+  if (debug) {
+    const lines = finalData.match(/^.*compileSdk.*$/gm);
+    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
   if (!compileSdkOK) {
     console.warn(
