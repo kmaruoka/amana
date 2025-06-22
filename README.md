@@ -38,7 +38,7 @@ cd $env:GITHUB_REPOS_DIR\amana
 npm run setup-gradle
 cd $env:GITHUB_REPOS_DIR\amana
 $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
-npm run update-android-sdk  # 依存モジュールの BuildConfig も有効化します
+npm run update-android-sdk  # 依存モジュールの BuildConfig と react-native-screens 用パッチを適用
 # 新しい依存パッケージをインストールした後は再実行してください
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
