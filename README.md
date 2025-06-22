@@ -1,5 +1,10 @@
 # Amana Project
 
+## Requirements
+
+- Node.js 18 以上
+- JDK 17 以上
+
 ## Quick Start
 
 ```powershell
@@ -21,6 +26,7 @@ npm run seed
 npm run dev &
 
 # モバイルセットアップ
+cd $env:GITHUB_REPOS_DIR\amana
 npm run init-mobile        # 初回のみ
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
