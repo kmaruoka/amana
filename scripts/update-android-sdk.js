@@ -169,19 +169,22 @@ function updateRootExt() {
   if (!fs.existsSync(buildGradle)) return;
   let root = fs.readFileSync(buildGradle, 'utf8');
   let changed = false;
-  if (/ext\.compileSdk(?:Version)?/.test(root)) {
-    if (/ext\.compileSdk(?:Version)?\s*=\s*\d+/.test(root)) {
-      root = root.replace(/ext\.compileSdk(?:Version)?\s*=\s*\d+/, 'ext.compileSdkVersion = 34');
-    } else if (/ext\s*\{/.test(root)) {
-      root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
-    }
+
+  if (/compileSdk(?:Version)?\s*=\s*\d+/.test(root)) {
+    root = root.replace(/compileSdkVersion\s*=\s*\d+/g, 'compileSdkVersion = 34');
+    root = root.replace(/compileSdk\s*=\s*\d+/g, 'compileSdk = 34');
+    changed = true;
+  } else if (/ext\s*\{/.test(root)) {
+    root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
     changed = true;
   }
-  if (/ext\.targetSdk(?:Version)?/.test(root)) {
-    root = root.replace(/ext\.targetSdkVersion\s*=\s*\d+/, 'ext.targetSdkVersion = 34');
-    root = root.replace(/ext\.targetSdk\s*=\s*\d+/, 'ext.targetSdk = 34');
+
+  if (/targetSdk(?:Version)?\s*=\s*\d+/.test(root)) {
+    root = root.replace(/targetSdkVersion\s*=\s*\d+/g, 'targetSdkVersion = 34');
+    root = root.replace(/targetSdk\s*=\s*\d+/g, 'targetSdk = 34');
     changed = true;
   }
+
   if (changed) {
     fs.writeFileSync(buildGradle, root);
     console.log('Updated ext compile/target SDK versions');
@@ -289,11 +292,19 @@ if (fs.existsSync(rnmapboxGradle)) {
 // Final sanity check
 if (fs.existsSync(appBuildGradle)) {
   const finalData = fs.readFileSync(appBuildGradle, 'utf8');
-  let compileSdkOK = /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) || /compileSdk\s*=?\s*34/.test(finalData);
-  if (!compileSdkOK && /compileSdk(?:Version)?\s*=?.*ext\.compileSdk(?:Version)?/.test(finalData)) {
+  let compileSdkOK =
+    /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) ||
+    /compileSdk\s*=?\s*34/.test(finalData);
+  if (
+    !compileSdkOK &&
+    /compileSdk(?:Version)?\s*=?.*ext.*compileSdk(?:Version)?/.test(finalData)
+  ) {
     if (fs.existsSync(buildGradle)) {
       const rootData = fs.readFileSync(buildGradle, 'utf8');
-      compileSdkOK = /ext\.compileSdk(?:Version)?\s*=\s*34/.test(rootData);
+      compileSdkOK =
+        /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
+        /compileSdk\s*=\s*34/.test(rootData) ||
+        /ext.*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
     }
   }
   if (!compileSdkOK) {

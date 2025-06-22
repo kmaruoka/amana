@@ -23,7 +23,7 @@ npm install
 npm audit fix
 npx prisma migrate dev --name init
 npm run seed
-npm run dev &
+npm run dev
 
 # モバイルセットアップ
 cd $env:GITHUB_REPOS_DIR\amana
@@ -31,6 +31,9 @@ npm run init-mobile        # 初回のみ
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
 npm audit fix --force
+cd $env:GITHUB_REPOS_DIR\amana
+# .env の MAPBOX_DOWNLOADS_TOKEN を設定
+npm run setup-gradle
 cd $env:GITHUB_REPOS_DIR\amana
 $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
 npm run update-android-sdk
