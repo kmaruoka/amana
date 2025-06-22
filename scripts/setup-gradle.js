@@ -41,14 +41,16 @@ console.log('Updated gradle.properties');
 
 // Insert Mapbox Maven block if missing
 let buildGradle = fs.readFileSync(buildGradlePath, 'utf8');
-const repoBlock = `maven {\n        url 'https://api.mapbox.com/downloads/v2/releases/maven'\n        authentication { basic(BasicAuthentication) }\n        credentials {\n            username = 'mapbox'\n            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''\n        }\n    }`;
+const repoBlockBuild = `maven {\n        url 'https://api.mapbox.com/downloads/v2/releases/maven'\n        authentication { basic(BasicAuthentication) }\n        credentials {\n            username = 'mapbox'\n            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ''\n        }\n    }`;
+
+const repoBlockSettings = `maven {\n        url 'https://api.mapbox.com/downloads/v2/releases/maven'\n        authentication { basic(BasicAuthentication) }\n        credentials {\n            username = 'mapbox'\n            password = providers.gradleProperty('MAPBOX_DOWNLOADS_TOKEN').orNull ?: System.getenv('MAPBOX_DOWNLOADS_TOKEN') ?: ''\n        }\n    }`;
 
 if (!buildGradle.includes("api.mapbox.com")) {
   const patterns = [
     /(allprojects\s*\{[\s\S]*?repositories\s*\{)/,
     /(dependencyResolutionManagement\s*\{[\s\S]*?repositories\s*\{)/,
   ];
-  const formatted = repoBlock
+  const formatted = repoBlockBuild
     .split(/\n/)
     .map((l) => '        ' + l)
     .join('\n');
@@ -79,7 +81,7 @@ if (fs.existsSync(settingsGradlePath)) {
   let settingsGradle = fs.readFileSync(settingsGradlePath, 'utf8');
   if (!settingsGradle.includes('api.mapbox.com')) {
     const pattern = /(dependencyResolutionManagement\s*\{[\s\S]*?repositories\s*\{)/;
-    const formatted = repoBlock
+    const formatted = repoBlockSettings
       .split(/\n/)
       .map((l) => '        ' + l)
       .join('\n');
@@ -88,7 +90,17 @@ if (fs.existsSync(settingsGradlePath)) {
       fs.writeFileSync(settingsGradlePath, settingsGradle);
       console.log('Inserted Mapbox repository block into settings.gradle');
     } else {
-      console.warn('Could not find repository block in settings.gradle');
+      settingsGradle +=
+        '\n' +
+        'dependencyResolutionManagement {\n' +
+        '    repositories {\n' +
+        formatted +
+        '\n    }\n' +
+        '}\n';
+      fs.writeFileSync(settingsGradlePath, settingsGradle);
+      console.log(
+        'Added dependencyResolutionManagement block with Mapbox repository to settings.gradle'
+      );
     }
   } else {
     console.log('Mapbox repository block already present in settings.gradle');
