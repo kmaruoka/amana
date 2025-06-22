@@ -75,3 +75,23 @@ git pull
 ```
 
 その後、上記 Quick Start の "モバイルセットアップ" 以降のコマンドを再実行します。
+
+## Android 14 で起動時にクラッシュする場合
+
+エミュレータや実機が Android 14(API 34) の場合、起動直後に次のエラーが表示されることがあります。
+
+```
+java.lang.RuntimeException: Requested enabled DevSupportManager, but BridgeDevSupportManager class was not found or could not be created
+Caused by: java.lang.SecurityException: One of RECEIVER_EXPORTED or RECEIVER_NOT_EXPORTED should be specified
+```
+
+これは React Native 0.71 系の `DevSupportManagerBase.java` が Android 14 の仕様に対応していないためです。以下の手順でパッチを適用し、`./gradlew clean` を実行してからビルドし直してください。
+
+```powershell
+cd $env:GITHUB_REPOS_DIR\amana
+npm run update-android-sdk
+cd $env:GITHUB_REPOS_DIR\amana\mobile\android
+.\gradlew.bat clean
+```
+
+パッチ適用後、`mobile/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java` に `compatRegisterReceiver` の呼び出しが挿入されていることを確認できます。

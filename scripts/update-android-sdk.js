@@ -459,11 +459,22 @@ const devSupportManagerBase = path.join(
 );
 
 function patchDevSupportManager() {
-  if (!fs.existsSync(devSupportManagerBase)) return;
+  if (!fs.existsSync(devSupportManagerBase)) {
+    console.warn('DevSupportManagerBase.java not found. Did you run npm install in mobile?');
+    return;
+  }
   let data = fs.readFileSync(devSupportManagerBase, 'utf8');
-  if (data.includes('compatRegisterReceiver')) return;
+  if (data.includes('compatRegisterReceiver')) {
+    console.log('DevSupportManagerBase already patched');
+    return;
+  }
+  const pattern = /mApplicationContext\.registerReceiver\(mReloadAppBroadcastReceiver,\s*filter\);/;
+  if (!pattern.test(data)) {
+    console.warn('Failed to locate registerReceiver call in DevSupportManagerBase.java');
+    return;
+  }
   data = data.replace(
-    'mApplicationContext.registerReceiver(mReloadAppBroadcastReceiver, filter);',
+    pattern,
     'compatRegisterReceiver(mApplicationContext, mReloadAppBroadcastReceiver, filter, true);',
   );
   const helper = `\n  /**\n   * Starting with Android 14, apps using context-registered receivers must specify whether the receiver is exported.\n   */\n  private void compatRegisterReceiver(Context context, BroadcastReceiver receiver, IntentFilter filter, boolean exported) {\n    if (Build.VERSION.SDK_INT >= 34 && context.getApplicationInfo().targetSdkVersion >= 34) {\n      context.registerReceiver(receiver, filter, exported ? Context.RECEIVER_EXPORTED : Context.RECEIVER_NOT_EXPORTED);\n    } else {\n      context.registerReceiver(receiver, filter);\n    }\n  }\n`;
