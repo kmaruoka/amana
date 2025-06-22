@@ -136,12 +136,16 @@ if (fs.existsSync(buildGradle)) {
   }
   data = data.replace(/com.android.tools.build:gradle:\d+\.\d+\.\d+/, 'com.android.tools.build:gradle:8.0.2');
   data = data.replace(/buildToolsVersion\s*=\s*"[\d.]+"/, 'buildToolsVersion = "34.0.0"');
-  if (/compileSdk(?:Version)?/.test(data)) {
+  if (/compileSdk(?:Version)?\s*=?.*ext\.compileSdkVersion/.test(data)) {
+    data = data.replace(/compileSdk(?:Version)?\s*=?.*ext\.compileSdkVersion/, 'compileSdkVersion = 34');
+  } else if (/compileSdk(?:Version)?/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
-  if (/targetSdkVersion/.test(data)) {
+  if (/targetSdkVersion\s*=?.*ext\.targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*=?.*ext\.targetSdkVersion/, 'targetSdkVersion = 34');
+  } else if (/targetSdkVersion/.test(data)) {
     data = data.replace(/targetSdkVersion\s*=\s*\d+/, 'targetSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
@@ -155,15 +159,43 @@ if (fs.existsSync(buildGradle)) {
   console.log('Updated Android Gradle plugin and SDK versions');
 }
 
+// Update ext.compileSdkVersion / ext.targetSdkVersion in root build.gradle
+function updateRootExt() {
+  if (!fs.existsSync(buildGradle)) return;
+  let root = fs.readFileSync(buildGradle, 'utf8');
+  let changed = false;
+  if (/ext\.compileSdkVersion/.test(root)) {
+    if (/ext\.compileSdkVersion\s*=\s*\d+/.test(root)) {
+      root = root.replace(/ext\.compileSdkVersion\s*=\s*\d+/, 'ext.compileSdkVersion = 34');
+    } else if (/ext\s*\{/.test(root)) {
+      root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
+    }
+    changed = true;
+  }
+  if (/ext\.targetSdkVersion/.test(root)) {
+    root = root.replace(/ext\.targetSdkVersion\s*=\s*\d+/, 'ext.targetSdkVersion = 34');
+    changed = true;
+  }
+  if (changed) {
+    fs.writeFileSync(buildGradle, root);
+    console.log('Updated ext compile/target SDK versions');
+  }
+}
+updateRootExt();
+
 // Update compileSdkVersion and targetSdkVersion in app/build.gradle for older templates
 if (fs.existsSync(appBuildGradle)) {
   let data = fs.readFileSync(appBuildGradle, 'utf8');
-  if (/compileSdk(?:Version)?/.test(data)) {
+  if (/compileSdk(?:Version)?\s*=?.*ext\.compileSdkVersion/.test(data)) {
+    data = data.replace(/compileSdk(?:Version)?\s*=?.*ext\.compileSdkVersion/, 'compileSdkVersion = 34');
+  } else if (/compileSdk(?:Version)?/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
-  if (/targetSdkVersion/.test(data)) {
+  if (/targetSdkVersion\s*=?.*ext\.targetSdkVersion/.test(data)) {
+    data = data.replace(/targetSdkVersion\s*=?.*ext\.targetSdkVersion/, 'targetSdkVersion = 34');
+  } else if (/targetSdkVersion/.test(data)) {
     data = data.replace(/targetSdkVersion\s*=?\s*(\d+|[A-Za-z_.]+)/g, 'targetSdkVersion = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
