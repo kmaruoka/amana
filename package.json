@@ -9,7 +9,8 @@
     "dev": "ts-node-dev src/index.ts",
     "seed": "ts-node prisma/seed.ts",
     "setup-gradle": "node scripts/setup-gradle.js",
-    "update-android-sdk": "node scripts/update-android-sdk.js"
+    "update-android-sdk": "node scripts/update-android-sdk.js",
+    "init-mobile": "node scripts/init-mobile.js"
   },
   "dependencies": {
     "express": "^4.18.2",
