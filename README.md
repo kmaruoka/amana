@@ -30,6 +30,8 @@ cd $env:GITHUB_REPOS_DIR\amana
 npm run init-mobile        # 初回のみ
 cd $env:GITHUB_REPOS_DIR\amana\mobile
 npm install
+# 依存パッケージは react-native-screens 3.22.0,
+# @rnmapbox/maps 10.1.32 に固定済み
 npm audit fix --force
 cd $env:GITHUB_REPOS_DIR\amana
 # .env の MAPBOX_DOWNLOADS_TOKEN を設定
