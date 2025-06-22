@@ -141,12 +141,13 @@
 # 技術スタック
 
 ## フロントエンド（スマホアプリ）
-- フレームワーク: React Native (Bare Workflow)
+- フレームワーク: React Native (Expo Managed Workflow)
 - 言語: TypeScript
-- 地図ライブラリ: MapLibre GL Native
+- 地図ライブラリ: react-native-maps
+- 位置情報: expo-location
 - 状態管理: Zustand or Redux Toolkit
 - UIコンポーネント: React Native Paper（マテリアルベース）
-- デバッグ支援: Flipper + React DevTools
+- デバッグ支援: Expo DevTools + React DevTools
 
 ## 位置情報・空間検索
 - サーバー側DB: PostgreSQL 15 + PostGIS（空間クエリ用）
@@ -175,7 +176,7 @@
 - Lint/Format: ESLint, Prettier
 - 型検査: TypeScript + tsconfig.strict
 - エディタ: VSCode / Cursor（TypeScriptサポート強化済み）
-- エミュレータ: Android Studio / Xcode Simulator（Bare用）
+- エミュレータ: Android Studio / Xcode Simulator（Expo/Bare兼用）
 
 ## テスト・品質管理
 - 単体テスト: Vitest or Jest

@@ -7,40 +7,20 @@
 
 ## Quick Start
 
-```powershell
-# 環境準備
-$env:GITHUB_REPOS_DIR="GitHubローカルリポジトリのルートディレクトリ"
-$env:JAVA_HOME="JDK17のインストールフォルダ"
-
+```bash
 # リポジトリ取得
-cd $env:GITHUB_REPOS_DIR
 git clone https://github.com/kmaruoka/amana.git
 cd amana
 
-# サーバーセットアップ (ルートで実行)
-cd $env:GITHUB_REPOS_DIR\amana
+# サーバーセットアップ
 npm install
-npm audit fix
 npx prisma migrate dev --name init
 npm run seed
 npm run dev
 
-# モバイルセットアップ
-cd $env:GITHUB_REPOS_DIR\amana
-npm run init-mobile        # 初回のみ
-cd $env:GITHUB_REPOS_DIR\amana\mobile
+# モバイルセットアップ (Expo)
+cd mobile
 npm install
-npm audit fix --force
-cd $env:GITHUB_REPOS_DIR\amana
-# .env の MAPBOX_DOWNLOADS_TOKEN を設定
-npm run setup-gradle
-cd $env:GITHUB_REPOS_DIR\amana
-$env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
-npm run update-android-sdk
-cd $env:GITHUB_REPOS_DIR\amana\mobile\android
-.\gradlew.bat clean
-cd $env:GITHUB_REPOS_DIR\amana
-npx react-native doctor
-npm run android   # または npm run ios
+npm start        # 'a' で Android, 'i' で iOS エミュレータ起動
 ```
 
