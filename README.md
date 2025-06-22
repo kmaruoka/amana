@@ -98,6 +98,8 @@ cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 
 パッチ適用後、`mobile/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/devsupport/DevSupportManagerBase.java` に `compatRegisterReceiver` の呼び出しが挿入されていることを確認できます。
 
+さらに `npm run update-android-sdk` は `MainApplication.java` の `getUseDeveloperSupport()` を `false` に書き換え、Android 12 以降でのクラッシュを防ぎます。開発者メニューを利用したい場合は React Native 0.72.4 以上へ更新した上で、この変更を元に戻してください。
+
 ## Hermes 関連のクラッシュ
 `couldn't find DSO to load: libjscexecutor.so` と表示される場合、Hermes 用の設定が不足しています。下記コマンドで自動修正を行い、キャッシュを削除した上で再ビルドしてください。`npm run update-android-sdk` は `mobile/android/app/build.gradle` に `project.ext.react = [ enableHermes: true ]` を追加し、`gradle.properties` の `hermesEnabled` を `true` に更新します。ファイルが無い場合は自動生成され、`ndkVersion` も推奨値に設定されます。
 
