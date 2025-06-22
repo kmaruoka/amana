@@ -156,9 +156,9 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   fs.writeFileSync(buildGradle, data);
   console.log('Updated Android Gradle plugin and SDK versions');
@@ -215,9 +215,9 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/android\s*\{/, '$&\n    targetSdkVersion = 34');
   }
   if (/ndkVersion/.test(data)) {
-    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion "23.1.7779620"');
+    data = data.replace(/ndkVersion\s*=?\s*"?[^"]+"?/, 'ndkVersion = "23.1.7779620"');
   } else {
-    data = data.replace(/android\s*\{/, '$&\n    ndkVersion "23.1.7779620"');
+    data = data.replace(/android\s*\{/, '$&\n    ndkVersion = "23.1.7779620"');
   }
   if (/buildFeatures/.test(data)) {
     data = data.replace(/buildFeatures\s*\{[^}]*\}/s, (m) => {
