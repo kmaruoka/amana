@@ -21,7 +21,26 @@ const pluginDirs = [
 let pluginDir = pluginDirs.find((d) => fs.existsSync(d));
 let pluginBuild = pluginDir ? path.join(pluginDir, 'build.gradle.kts') : null;
 const rnmapboxGradle = path.resolve(__dirname, '../mobile/node_modules/@rnmapbox/maps/android/build.gradle');
+const nodeModulesDir = path.resolve(__dirname, '../mobile/node_modules');
 const gradleProperties = path.join(androidDir, 'gradle.properties');
+
+function updateModuleCompileOptions(gradlePath) {
+  if (!fs.existsSync(gradlePath)) return;
+  let data = fs.readFileSync(gradlePath, 'utf8');
+  let changed = false;
+  if (/JavaVersion\.VERSION_1_8/.test(data)) {
+    data = data.replace(/JavaVersion\.VERSION_1_8/g, 'JavaVersion.VERSION_17');
+    changed = true;
+  }
+  if (/jvmTarget\s*=\s*"1\.8"/.test(data)) {
+    data = data.replace(/jvmTarget\s*=\s*"1\.8"/g, 'jvmTarget = "17"');
+    changed = true;
+  }
+  if (changed) {
+    fs.writeFileSync(gradlePath, data);
+    console.log(`Updated compileOptions in ${path.basename(path.dirname(gradlePath))}`);
+  }
+}
 
 // Resolve package name for Android namespace
 let packageName = process.env.ANDROID_PACKAGE_NAME;
@@ -309,6 +328,15 @@ if (!pluginDir) {
     data = data.replace(/kotlin\("jvm"\) version "[\d.]+"/, 'kotlin("jvm") version "1.8.10"');
     fs.writeFileSync(pluginBuild, data);
     console.log('Patched react-native-gradle-plugin Kotlin version to 1.8.10');
+  }
+}
+
+// Ensure node module build.gradle files use Java 17
+if (fs.existsSync(nodeModulesDir)) {
+  const modules = ['react-native-screens', 'react-native-safe-area-context'];
+  for (const mod of modules) {
+    const g = path.join(nodeModulesDir, mod, 'android', 'build.gradle');
+    updateModuleCompileOptions(g);
   }
 }
 
