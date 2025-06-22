@@ -170,18 +170,36 @@ function updateRootExt() {
   let root = fs.readFileSync(buildGradle, 'utf8');
   let changed = false;
 
-  if (/compileSdk(?:Version)?\s*=\s*\d+/.test(root)) {
+  const hasCompileSdkVersion = /compileSdkVersion\s*=\s*\d+/.test(root);
+  const hasCompileSdk = /compileSdk(?!Version)\s*=\s*\d+/.test(root);
+  if (hasCompileSdkVersion) {
     root = root.replace(/compileSdkVersion\s*=\s*\d+/g, 'compileSdkVersion = 34');
+    changed = true;
+  }
+  if (hasCompileSdk) {
     root = root.replace(/compileSdk(?!Version)\s*=\s*\d+/g, 'compileSdk = 34');
     changed = true;
-  } else if (/ext\s*\{/.test(root)) {
+  }
+  if (!hasCompileSdkVersion && hasCompileSdk) {
+    root = root.replace(/compileSdk(?!Version)\s*=\s*\d+/, '$&\n    compileSdkVersion = 34');
+    changed = true;
+  } else if (!hasCompileSdk && !hasCompileSdkVersion && /ext\s*\{/.test(root)) {
     root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
     changed = true;
   }
 
-  if (/targetSdk(?:Version)?\s*=\s*\d+/.test(root)) {
+  const hasTargetSdkVersion = /targetSdkVersion\s*=\s*\d+/.test(root);
+  const hasTargetSdk = /targetSdk(?!Version)\s*=\s*\d+/.test(root);
+  if (hasTargetSdkVersion) {
     root = root.replace(/targetSdkVersion\s*=\s*\d+/g, 'targetSdkVersion = 34');
+    changed = true;
+  }
+  if (hasTargetSdk) {
     root = root.replace(/targetSdk(?!Version)\s*=\s*\d+/g, 'targetSdk = 34');
+    changed = true;
+  }
+  if (!hasTargetSdkVersion && hasTargetSdk) {
+    root = root.replace(/targetSdk(?!Version)\s*=\s*\d+/, '$&\n    targetSdkVersion = 34');
     changed = true;
   }
 
@@ -306,11 +324,6 @@ if (fs.existsSync(appBuildGradle)) {
       /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
       /compileSdk\s*=\s*34/.test(rootData) ||
       /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
-  }
-  if (debug) {
-    const lines = finalData.match(/^.*compileSdk.*$/gm);
-    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
-    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
   if (debug) {
     const lines = finalData.match(/^.*compileSdk.*$/gm);
