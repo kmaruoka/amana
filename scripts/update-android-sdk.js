@@ -29,7 +29,7 @@ function ensureHermesBlock() {
   let gradle = fs.readFileSync(appBuildGradle, 'utf8');
   if (!/project\.ext\.react\s*=/.test(gradle)) {
     gradle = gradle.replace(
-      /apply from: ["']..\/..\/node_modules\/react-native\/react\.gradle["']/,
+      /apply from:\s*["'][^"']*react\.gradle["']/,
       (m) => `project.ext.react = [\n    enableHermes: true\n]\n${m}`,
     );
     fs.writeFileSync(appBuildGradle, gradle);
@@ -169,6 +169,9 @@ function hasKotlinAndroidPlugin(data) {
 }
 
 // Record JAVA_HOME for Gradle if possible
+if (!fs.existsSync(gradleProperties)) {
+  fs.writeFileSync(gradleProperties, '');
+}
 if (fs.existsSync(gradleProperties)) {
   const javaHome = process.env.JAVA_HOME;
   if (javaHome) {
