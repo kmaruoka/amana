@@ -39,7 +39,9 @@ $env:ANDROID_PACKAGE_NAME = 'jp.kmaruoka.amana'
 npm run update-android-sdk
 cd $env:GITHUB_REPOS_DIR\amana\mobile\android
 .\gradlew.bat clean
-cd $env:GITHUB_REPOS_DIR\amana
+# android フォルダがロックされる場合は Gradle デーモンを停止
+.\gradlew.bat --stop
+cd $env:GITHUB_REPOS_DIR\amana\mobile
 npx react-native doctor
 npm run android   # または npm run ios
 ```
