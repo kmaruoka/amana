@@ -142,7 +142,7 @@ if (fs.existsSync(buildGradle)) {
     data = data.replace(/compileSdk(?:Version)?\s*=?.*rootProject\.ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
   } else if (/compileSdk(?:Version)?/.test(data) || /compileSdk\s*=/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
-    data = data.replace(/^(\s*)compileSdk\s*.*$/gm, '$1compileSdk = 34');
+    data = data.replace(/^(\s*)compileSdk(?!Version)\s*.*$/gm, '$1compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
@@ -172,7 +172,7 @@ function updateRootExt() {
 
   if (/compileSdk(?:Version)?\s*=\s*\d+/.test(root)) {
     root = root.replace(/compileSdkVersion\s*=\s*\d+/g, 'compileSdkVersion = 34');
-    root = root.replace(/compileSdk\s*=\s*\d+/g, 'compileSdk = 34');
+    root = root.replace(/compileSdk(?!Version)\s*=\s*\d+/g, 'compileSdk = 34');
     changed = true;
   } else if (/ext\s*\{/.test(root)) {
     root = root.replace(/ext\s*\{/, '$&\n    compileSdkVersion = 34');
@@ -181,7 +181,7 @@ function updateRootExt() {
 
   if (/targetSdk(?:Version)?\s*=\s*\d+/.test(root)) {
     root = root.replace(/targetSdkVersion\s*=\s*\d+/g, 'targetSdkVersion = 34');
-    root = root.replace(/targetSdk\s*=\s*\d+/g, 'targetSdk = 34');
+    root = root.replace(/targetSdk(?!Version)\s*=\s*\d+/g, 'targetSdk = 34');
     changed = true;
   }
 
@@ -201,7 +201,7 @@ if (fs.existsSync(appBuildGradle)) {
     data = data.replace(/compileSdk(?:Version)?\s*=?.*rootProject\.ext\.compileSdk(?:Version)?/, 'compileSdkVersion = 34');
   } else if (/compileSdk(?:Version)?/.test(data) || /compileSdk\s*=/.test(data)) {
     data = data.replace(/^(\s*)compileSdk(?:Version)?\s*.*$/gm, '$1compileSdkVersion = 34');
-    data = data.replace(/^(\s*)compileSdk\s*.*$/gm, '$1compileSdk = 34');
+    data = data.replace(/^(\s*)compileSdk(?!Version)\s*.*$/gm, '$1compileSdk = 34');
   } else {
     data = data.replace(/android\s*\{/, '$&\n    compileSdkVersion = 34');
   }
