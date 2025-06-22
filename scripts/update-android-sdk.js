@@ -291,6 +291,7 @@ if (fs.existsSync(rnmapboxGradle)) {
 
 // Final sanity check
 if (fs.existsSync(appBuildGradle)) {
+  const debug = process.env.DEBUG_SDK_UPDATE;
   const finalData = fs.readFileSync(appBuildGradle, 'utf8');
   let compileSdkOK =
     /compileSdk(?:Version)?\s*=?\s*34/.test(finalData) ||
@@ -301,11 +302,20 @@ if (fs.existsSync(appBuildGradle)) {
   ) {
     if (fs.existsSync(buildGradle)) {
       const rootData = fs.readFileSync(buildGradle, 'utf8');
+      if (debug) {
+        const lines = rootData.match(/^.*compileSdk.*$/gm);
+        console.log('[DEBUG] root build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+      }
       compileSdkOK =
         /compileSdk(?:Version)?\s*=\s*34/.test(rootData) ||
         /compileSdk\s*=\s*34/.test(rootData) ||
         /ext[\s\S]*compileSdk(?:Version)?\s*=\s*34/.test(rootData);
     }
+  }
+  if (debug) {
+    const lines = finalData.match(/^.*compileSdk.*$/gm);
+    console.log('[DEBUG] app/build.gradle compileSdk lines:\n' + (lines ? lines.join('\n') : 'none'));
+    console.log('[DEBUG] compileSdkOK:', compileSdkOK);
   }
   if (!compileSdkOK) {
     console.warn(
